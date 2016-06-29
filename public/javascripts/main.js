@@ -1,20 +1,59 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 var React = require('react');
 
-module.exports = React.createClass({displayName: "exports",
-  render: function(){
-    return(React.createElement("h1", null, "Hello React"))
+module.exports = class Calendar extends React.Component{
+  constructor(props){
+    super(props);
+    this.state = {calendar_month: "",
+                  calendar_year: "",
+                  today: "",
+                  month: "",
+                  month_list:  ["January","February","March","April","May","June","July","August","September","October","November","December"]}
   }
-})
+  componentDidMount(){
+    var today = new Date();
+    var month = today.getMonth()
+    this.setState({calendar_month: this.state.month_list[month],calendar_year: today.getFullYear(),month: month})
+  }
+  changeMonth(){
+
+  }
+  render(){
+    return(
+      React.createElement("div", null, 
+        React.createElement("table", null, 
+          React.createElement("tbody", null, 
+            React.createElement("tr", null, 
+              React.createElement("th", {colSpan: "4"}, "MemoUD"), 
+              React.createElement("th", {colSpan: "3"}, this.state.calendar_month, " ", this.state.calendar_year)
+            ), 
+            React.createElement("tr", null, 
+              React.createElement("td", null, "Monday"), 
+              React.createElement("td", null, "Tuesday"), 
+              React.createElement("td", null, "Wednesday"), 
+              React.createElement("td", null, "Thursday"), 
+              React.createElement("td", null, "Friday"), 
+              React.createElement("td", null, "Saturday"), 
+              React.createElement("td", null, "Sunday")
+            ), 
+            React.createElement("tr", null
+
+            )
+          )
+        )
+      )
+      )
+  }
+}
 
 },{"react":169}],2:[function(require,module,exports){
 var React = require('react');
 var ReactDOM = require('react-dom');
-var Hello = require('./hello.jsx');
+var Calendar = require('./calendar_es6.jsx');
 
-ReactDOM.render(React.createElement(Hello, null), document.getElementById('main'));
+ReactDOM.render(React.createElement(Calendar, null), document.getElementById('main'));
 
-},{"./hello.jsx":1,"react":169,"react-dom":4}],3:[function(require,module,exports){
+},{"./calendar_es6.jsx":1,"react":169,"react-dom":4}],3:[function(require,module,exports){
 // shim for using process in browser
 
 var process = module.exports = {};
