@@ -1,8 +1,10 @@
 body {
   padding: 50px;
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
-}
-
-a {
-  color: #00B7FF;
-}
+  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif; }
+  body table.borderless th {
+    border: none;
+    text-align: center; }
+    body table.borderless th .changeMonth {
+      cursor: pointer; }
+  body table.borderless .weekday {
+    text-align: center; }

@@ -17,6 +17,7 @@
     "morgan": "~1.6.1",
     "pug": "",
     "react": "^15.1.0",
+    "react-bootstrap": "^0.29.5",
     "react-dom": "^15.1.0",
     "react-router": "^2.5.1",
     "reactify": "^1.1.1",
@@ -24,7 +25,9 @@
     "vinyl-source-stream": "^1.1.0"
   },
   "main": "app.js",
-  "devDependencies": {},
+  "devDependencies": {
+    "gulp-sass": "^2.3.2"
+  },
   "author": "",
   "license": "ISC",
   "description": ""
