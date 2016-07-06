@@ -8,3 +8,9 @@ body {
       cursor: pointer; }
   body table.borderless .weekday {
     text-align: center; }
+  body tr.weeks td.prev-month {
+    color: red; }
+  body tr.weeks td.current-month {
+    color: green; }
+  body tr.weeks td.next-month {
+    color: blue; }

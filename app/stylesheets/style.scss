@@ -1,0 +1,33 @@
+body {
+  padding: 50px;
+  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+
+  table.borderless {
+    th {
+      border: none;
+      text-align: center;
+
+      .changeMonth {
+        cursor: pointer;
+      }
+    }
+    .weekday {
+      text-align: center;
+    }
+  }
+
+  tr.weeks {
+    td.prev-month {
+      color: red;
+    }
+
+    td.current-month {
+      color: green;
+    }
+
+    td.next-month {
+      color: blue;
+    }
+  }
+
+}
