@@ -3,7 +3,7 @@ var React = require('react');
 module.exports = class ShowPrevMonth extends React.Component{
   showPrevWeek(){
     var prevMonth = this.props.prevMonth;
-    prevMonth = prevMonth.concat(this.props.currentMonth.slice(prevMonth.length,7));
+    prevMonth = prevMonth.concat(this.props.currentMonth.slice(0,7-prevMonth.length));
     return(prevMonth.map((day,i)=>{
       if(i < this.props.prevMonth.length){
         return <td className="prev-month days" key={i+1}>{day}</td>

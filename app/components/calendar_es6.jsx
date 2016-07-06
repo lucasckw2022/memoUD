@@ -48,7 +48,6 @@ module.exports = class Calendar extends React.Component{
     ([...Array(weekdayOfFirstDay)].map((day,i)=>{
       var countPrevMonth = DaysOfprevMonth-(weekdayOfFirstDay-(i+1))
       newPrevMonth.push(countPrevMonth);
-      newCurrentMonth.push(countPrevMonth)
     }),
     [...Array(totalDaysInMonth)].map((day,i)=>{
       newCurrentMonth.push(i+1);
@@ -58,8 +57,8 @@ module.exports = class Calendar extends React.Component{
     }));
 
     show.push(<ShowPrevMonth prevMonth={newPrevMonth} currentMonth={newCurrentMonth}/>)
-    for(var i = 1; i <= weeksInMonth-1; i++){
-    show.push(<ShowCurrentMonth curWeek={i} month={newCurrentMonth} prevMonthLength={newPrevMonth.length} key={i}/>)
+    for(var i = 1; i <= weeksInMonth-2; i++){
+    show.push(<ShowCurrentMonth curWeek={i} month={newCurrentMonth} prevMonthLength={newPrevMonth.length} weekdayOfFirstDay={weekdayOfFirstDay} key={i}/>)
     }
     show.push(<ShowNextMonth nextMonth={newNextMonth} currentMonth={newCurrentMonth} weekdayOflastDay={weekdayOflastDay} />)
     this.setState({printedMonth: show});

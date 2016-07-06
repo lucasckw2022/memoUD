@@ -49,7 +49,6 @@ module.exports = class Calendar extends React.Component{
     ([...Array(weekdayOfFirstDay)].map((day,i)=>{
       var countPrevMonth = DaysOfprevMonth-(weekdayOfFirstDay-(i+1))
       newPrevMonth.push(countPrevMonth);
-      newCurrentMonth.push(countPrevMonth)
     }),
     [...Array(totalDaysInMonth)].map((day,i)=>{
       newCurrentMonth.push(i+1);
@@ -59,8 +58,8 @@ module.exports = class Calendar extends React.Component{
     }));
 
     show.push(React.createElement(ShowPrevMonth, {prevMonth: newPrevMonth, currentMonth: newCurrentMonth}))
-    for(var i = 1; i <= weeksInMonth-1; i++){
-    show.push(React.createElement(ShowCurrentMonth, {curWeek: i, month: newCurrentMonth, prevMonthLength: newPrevMonth.length, key: i}))
+    for(var i = 1; i <= weeksInMonth-2; i++){
+    show.push(React.createElement(ShowCurrentMonth, {curWeek: i, month: newCurrentMonth, prevMonthLength: newPrevMonth.length, weekdayOfFirstDay: weekdayOfFirstDay, key: i}))
     }
     show.push(React.createElement(ShowNextMonth, {nextMonth: newNextMonth, currentMonth: newCurrentMonth, weekdayOflastDay: weekdayOflastDay}))
     this.setState({printedMonth: show});
@@ -118,7 +117,7 @@ var React = require('react');
 module.exports = class ShowCurrentMonth extends React.Component{
   showWeek(){
     var curWeek = this.props.curWeek+1,
-        week    = this.props.month.slice(((7*curWeek)-7),(7*curWeek))
+        week    = this.props.month.slice(((7*curWeek)-7-this.props.weekdayOfFirstDay),(7*curWeek-this.props.weekdayOfFirstDay))
 
     return(week.map((day,i)=>{
       return(React.createElement("td", {className: "current-month days", key: i+1}, day))
@@ -133,11 +132,10 @@ var React = require('react');
 
 module.exports = class ShowNextMonth extends React.Component{
   showNextWeek(){
-    var nextMonth = this.props.currentMonth.slice(this.props.currentMonth-(this.props.weekdayOflastDay+1),this.props.currentMonth-this.props.nextMonth);
+    var nextMonth = this.props.currentMonth.slice(this.props.currentMonth.length-(this.props.weekdayOflastDay+1),this.props.currentMonth.length);
     nextMonth = nextMonth.concat(this.props.nextMonth);
-    debugger
     return(nextMonth.map((day,i)=>{
-      if(i < 7-this.props.nextMonth){
+      if(i < 7-this.props.nextMonth.length){
         return React.createElement("td", {className: "current-month days", key: i+1}, day)
       } else{
         return React.createElement("td", {className: "next-month days", key: i+1}, day)
@@ -154,7 +152,7 @@ var React = require('react');
 module.exports = class ShowPrevMonth extends React.Component{
   showPrevWeek(){
     var prevMonth = this.props.prevMonth;
-    prevMonth = prevMonth.concat(this.props.currentMonth.slice(prevMonth.length,7));
+    prevMonth = prevMonth.concat(this.props.currentMonth.slice(0,7-prevMonth.length));
     return(prevMonth.map((day,i)=>{
       if(i < this.props.prevMonth.length){
         return React.createElement("td", {className: "prev-month days", key: i+1}, day)
