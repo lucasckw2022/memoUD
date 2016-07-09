@@ -1,23 +1,32 @@
-var React = require('react');
-var ShowCurrentMonth = require('./show_current_month.jsx');
-var ShowPrevMonth = require('./show_prev_month.jsx');
-var ShowNextMonth = require('./show_next_month.jsx');
+var React             = require('react');
+var ShowCurrentMonth  = require('./show_current_month.jsx');
+var ShowPrevMonth     = require('./show_prev_month.jsx');
+var ShowNextMonth     = require('./show_next_month.jsx');
+var ShowMemo          = require('./memo_show.jsx');
 
 module.exports = class Calendar extends React.Component{
   constructor(props){
     super(props);
-    this.state = {today: new Date(),
-                  calendar_month: "",
-                  calendar_year: new Date().getFullYear(),
-                  month: new Date().getMonth(),
-                  printedMonth: [],
-                  month_list:  ["January","February","March","April","May","June","July","August","September","October","November","December"]}
-    this.changeMonth = this.changeMonth.bind(this)
-    this.showWeeks = this.showWeeks.bind(this)
+    this.state = {today           : new Date(),
+                  calendar_month  : "",
+                  calendar_year   : new Date().getFullYear(),
+                  month           : new Date().getMonth(),
+                  printedMonth    : [],
+                  month_list      :  ["January","February","March","April","May","June","July","August","September","October","November","December"],
+                  showMemoModal   : false,
+                  memolist        : [],
+                  selectedDate    : "",
+                  selectedMonth   : "",
+                  selectedYear    : ""}
+    this.changeMonth    = this.changeMonth.bind(this)
+    this.showWeeks      = this.showWeeks.bind(this)
+    this.toggleShowMemo = this.toggleShowMemo.bind(this)
   }
   componentDidMount(){
-    this.setState({calendar_month: this.state.month_list[this.state.month]})
-    this.showWeeks()
+    this.setState({calendar_month: this.state.month_list[this.state.month]});
+    this.showWeeks();
+    $.ajax({url: '/api/memos'}).
+      done((memolist)=>{this.setState({memolist:memolist})})
   }
   changeMonth(next,month = this.state.month){
     $("h1").addClass("rubberBand animated")
@@ -30,20 +39,23 @@ module.exports = class Calendar extends React.Component{
       :
       month-1 < 0 ? month = 11 : month-1;
     newPrintedMonth = newPrintedMonth%12;
-    this.setState({calendar_month: this.state.month_list[newPrintedMonth], calendar_year: currentCalendarYear, month: newPrintedMonth,},()=>this.showWeeks())
+    this.setState({
+      calendar_month  : this.state.month_list[newPrintedMonth],
+      calendar_year   : currentCalendarYear,
+      month           : newPrintedMonth},
+      ()=>this.showWeeks())
     $("h1").one('animationend', ()=>{$("h1").removeClass("rubberBand animated")})
-
   }
   showWeeks(){
-    var newCurrentMonth = [],
-        newPrevMonth = [],
-        newNextMonth = [],
+    var newCurrentMonth   = [],
+        newPrevMonth      = [],
+        newNextMonth      = [],
         weekdayOfFirstDay = new Date(this.state.calendar_year,this.state.month,1).getDay(),
-        totalDaysInMonth = new Date(this.state.calendar_year,this.state.month+1,0).getDate(),
-        DaysOfprevMonth = new Date(this.state.calendar_year,this.state.month,0).getDate(),
-        weekdayOflastDay =  new Date(this.state.calendar_year,this.state.month,totalDaysInMonth).getDay(),
-        show = [],
-        weeksInMonth = Math.ceil((weekdayOfFirstDay + totalDaysInMonth)/7);
+        totalDaysInMonth  = new Date(this.state.calendar_year,this.state.month+1,0).getDate(),
+        DaysOfprevMonth   = new Date(this.state.calendar_year,this.state.month,0).getDate(),
+        weekdayOflastDay  =  new Date(this.state.calendar_year,this.state.month,totalDaysInMonth).getDay(),
+        show              = [],
+        weeksInMonth      = Math.ceil((weekdayOfFirstDay + totalDaysInMonth)/7);
 
     ([...Array(weekdayOfFirstDay)].map((day,i)=>{
       var countPrevMonth = DaysOfprevMonth-(weekdayOfFirstDay-(i+1))
@@ -56,14 +68,33 @@ module.exports = class Calendar extends React.Component{
       newNextMonth.push(i+1);
     }));
 
-    show.push(<ShowPrevMonth prevMonth={newPrevMonth} currentMonth={newCurrentMonth}/>)
+    show.push(<ShowPrevMonth  toggleShowMemo  ={this.toggleShowMemo}
+                              prevMonth       ={newPrevMonth}
+                              currentMonth    ={newCurrentMonth}
+                              monthIndex      ={this.state.month}
+                              year            ={this.state.calendar_year} />)
     for(var i = 1; i <= weeksInMonth-2; i++){
-    show.push(<ShowCurrentMonth curWeek={i} month={newCurrentMonth} prevMonthLength={newPrevMonth.length} weekdayOfFirstDay={weekdayOfFirstDay} key={i}/>)
+      show.push(<ShowCurrentMonth   toggleShowMemo    ={this.toggleShowMemo}
+                                    curWeek           ={i}
+                                    curMonth          ={newCurrentMonth}
+                                    prevMonthLength   ={newPrevMonth.length}
+                                    weekdayOfFirstDay ={weekdayOfFirstDay}
+                                    key               ={i} />)
     }
-    show.push(<ShowNextMonth nextMonth={newNextMonth} currentMonth={newCurrentMonth} weekdayOflastDay={weekdayOflastDay} />)
+    show.push(<ShowNextMonth  toggleShowMemo    ={this.toggleShowMemo}
+                              nextMonth         ={newNextMonth}
+                              currentMonth      ={newCurrentMonth}
+                              weekdayOflastDay  ={weekdayOflastDay}
+                              monthIndex        ={this.state.month}
+                              year              ={this.state.calendar_year} />)
     this.setState({printedMonth: show});
   }
-
+  toggleShowMemo(date,month = this.state.month,year = this.state.calendar_year){
+    this.setState({ showMemoModal : !this.state.showMemoModal,
+                    selectedDate  : date,
+                    selectedMonth : this.state.month_list[month],
+                    selectedYear  : year})
+  }
   render(){
     return(
       <div>
@@ -73,7 +104,7 @@ module.exports = class Calendar extends React.Component{
             <tr>
               <th className="col-sm-3" colSpan="3"></th>
               <th className="col-sm-1">
-                <span className="changeMonth"  onClick={()=>this.changeMonth(false,this.state.month)}>
+                <span className="changeMonth" onClick={()=>this.changeMonth(false,this.state.month)}>
                   Prev
                 </span>
               </th>
@@ -96,9 +127,14 @@ module.exports = class Calendar extends React.Component{
               <td>Saturday</td>
             </tr>
             {this.state.printedMonth}
+            <ShowMemo show  ={this.state.showMemoModal}
+                      close ={this.toggleShowMemo}
+                      year  ={this.state.selectedYear}
+                      month ={this.state.selectedMonth}
+                      date  ={this.state.selectedDate} />
           </tbody>
         </table>
       </div>
-      )
+    )
   }
 }
