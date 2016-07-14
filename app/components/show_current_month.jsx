@@ -1,14 +1,18 @@
 var React = require('react');
 
 module.exports = class ShowCurrentMonth extends React.Component{
+  componentDidMount(){
+    $('.modal-trigger').leanModal();
+  }
   showWeek(){
     var curWeek = this.props.curWeek+1,
         week    = this.props.curMonth.slice(((7*curWeek)-7-this.props.weekdayOfFirstDay),(7*curWeek-this.props.weekdayOfFirstDay))
 
     return(week.map((day,i)=>{
-      return( <td className="current-month"
+      return( <td className="current-month modal-trigger"
                   onClick={()=>{this.props.toggleShowMemo(day)}}
-                  key={i+1}>
+                  key={i+1}
+                  href="#memoModal">
                 <span className="date">{day}</span>
               </td>)
     }))

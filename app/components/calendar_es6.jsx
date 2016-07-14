@@ -17,7 +17,8 @@ module.exports = class Calendar extends React.Component{
                   memolist        : [],
                   selectedDate    : "",
                   selectedMonth   : "",
-                  selectedYear    : ""}
+                  selectedYear    : "",
+                  selectedMonthIndex: ""}
     this.changeMonth    = this.changeMonth.bind(this)
     this.showWeeks      = this.showWeeks.bind(this)
     this.toggleShowMemo = this.toggleShowMemo.bind(this)
@@ -26,7 +27,7 @@ module.exports = class Calendar extends React.Component{
     this.setState({calendar_month: this.state.month_list[this.state.month]});
     this.showWeeks();
     $.ajax({url: '/api/memos'}).
-      done((memolist)=>{this.setState({memolist:memolist})})
+      done((memolist)=>{this.setState({memolist: memolist})})
   }
   changeMonth(next,month = this.state.month){
     $("h1").addClass("rubberBand animated")
@@ -90,10 +91,11 @@ module.exports = class Calendar extends React.Component{
     this.setState({printedMonth: show});
   }
   toggleShowMemo(date,month = this.state.month,year = this.state.calendar_year){
-    this.setState({ showMemoModal : !this.state.showMemoModal,
-                    selectedDate  : date,
-                    selectedMonth : this.state.month_list[month],
-                    selectedYear  : year})
+    this.setState({ showMemoModal     : !this.state.showMemoModal,
+                    selectedDate      : date,
+                    selectedMonth     : this.state.month_list[month],
+                    selectedMonthIndex: month,
+                    selectedYear      : year})
   }
   render(){
     return(
@@ -127,11 +129,10 @@ module.exports = class Calendar extends React.Component{
               <td>Saturday</td>
             </tr>
             {this.state.printedMonth}
-            <ShowMemo show  ={this.state.showMemoModal}
-                      close ={this.toggleShowMemo}
-                      year  ={this.state.selectedYear}
-                      month ={this.state.selectedMonth}
-                      date  ={this.state.selectedDate} />
+            <ShowMemo year       ={this.state.selectedYear}
+                      month      ={this.state.selectedMonth}
+                      monthIndex ={this.state.selectedMonthIndex}
+                      date       ={this.state.selectedDate} />
           </tbody>
         </table>
       </div>

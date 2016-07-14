@@ -18,18 +18,17 @@ router.use('/', function (req,res,next) {
   console.log("accessed to DB");
   next();
 });
-// return json
-router.get('/', function(req,res){
-  res.json({message: 'success!Yay!'});
-});
 router.route('/memos')
     .post((req,res)=>{
       var memo = new Memos();
+      memo.content = req.body.content;
       memo.year = req.body.year;
+      memo.month = req.body.month;
+      memo.date = req.body.date;
       memo.save((err)=>{
         if(err){
-          res.send(err);}
-        res.json({message: "memo created"})
+          res.send(err);
+        }
       })
     })
     .get((req,res)=>{

@@ -1,22 +1,20 @@
 var React = require('react');
 var Modal = require('react-bootstrap').Modal;
+var CreateMemos = require('./create_memo.jsx');
 
 module.exports = class ShowMemo extends React.Component{
   render(){
-    return (
-        <Modal
-           show={this.props.show}
-           onHide={this.props.close}
-         >
-           <Modal.Header closeButton>
-             <Modal.Title id="contained-modal-title">
-                {this.props.date} {this.props.month} {this.props.year}
-              </Modal.Title>
-           </Modal.Header>
-           <Modal.Body>
-             Elit est explicabo ipsum eaque dolorem blanditiis doloribus sed id ipsam, beatae, rem fuga id earum? Inventore et facilis obcaecati.
-           </Modal.Body>
-         </Modal>
+    var year        = this.props.year,
+        month       = this.props.month,
+        monthIndex  = this.props.monthIndex,
+        date        = this.props.date
+    return(
+        <div id="memoModal" className="modal">
+          <div className="modal-content">
+            <h1>{date} {month} {year}</h1>
+            <CreateMemos year={year} monthIndex={monthIndex} date={date}/>
+          </div>
+        </div>
     )
   }
 }
