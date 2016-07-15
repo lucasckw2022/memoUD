@@ -13,6 +13,7 @@ var mongoose      = require('mongoose');
 mongoose.connect('mongodb://localhost/memodbtest');
 var router        = express.Router();
 var Memos         = require('./public/javascripts/models/memos');
+// Memos.aggregate([{$project: {year: "$year"}}]);
 // this is middleware everytime access to the database
 router.use('/', function (req,res,next) {
   console.log("accessed to DB");
@@ -32,7 +33,9 @@ router.route('/memos')
       })
     })
     .get((req,res)=>{
-      Memos.find((err, memos)=>{
+      Memos.aggregate([ {$project: {year: 1, month: 1, date: 1,content: 1}},
+                        {$sort: {date: 1}}
+      ],(err, memos)=>{
         if(err){
           res.send(err);}
         res.json(memos);

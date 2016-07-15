@@ -14,7 +14,7 @@ module.exports = class Calendar extends React.Component{
                   printedMonth    : [],
                   month_list      :  ["January","February","March","April","May","June","July","August","September","October","November","December"],
                   showMemoModal   : false,
-                  memolist        : [],
+                  memoList        : [],
                   selectedDate    : "",
                   selectedMonth   : "",
                   selectedYear    : "",
@@ -25,9 +25,13 @@ module.exports = class Calendar extends React.Component{
   }
   componentDidMount(){
     this.setState({calendar_month: this.state.month_list[this.state.month]});
-    this.showWeeks();
     $.ajax({url: '/api/memos'}).
-      done((memolist)=>{this.setState({memolist: memolist})})
+      done((memoList)=>{
+        this.setState({memoList: memoList})
+      }).
+      done(()=>{
+        this.showWeeks();
+      })
   }
   changeMonth(next,month = this.state.month){
     $("h1").addClass("rubberBand animated")
@@ -73,13 +77,17 @@ module.exports = class Calendar extends React.Component{
                               prevMonth       ={newPrevMonth}
                               currentMonth    ={newCurrentMonth}
                               monthIndex      ={this.state.month}
-                              year            ={this.state.calendar_year} />)
+                              year            ={this.state.calendar_year}
+                              memoList        ={this.state.memoList} />)
     for(var i = 1; i <= weeksInMonth-2; i++){
       show.push(<ShowCurrentMonth   toggleShowMemo    ={this.toggleShowMemo}
                                     curWeek           ={i}
                                     curMonth          ={newCurrentMonth}
                                     prevMonthLength   ={newPrevMonth.length}
                                     weekdayOfFirstDay ={weekdayOfFirstDay}
+                                    memoList          ={this.state.memoList}
+                                    monthIndex        ={this.state.month}
+                                    year              ={this.state.calendar_year}
                                     key               ={i} />)
     }
     show.push(<ShowNextMonth  toggleShowMemo    ={this.toggleShowMemo}

@@ -11,7 +11,7 @@ module.exports = class CreateMemos extends React.Component{
     $.ajax({url:  "/api/memos",
             method: "POST",
             data: { year: this.props.year,
-                    month: this.props.monthIndex,
+                    month: this.props.monthIndex+1,
                     date: this.props.date,
                     content: content}
     }).done((result)=>{console.log(result)})

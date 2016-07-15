@@ -15,7 +15,7 @@ module.exports = class Calendar extends React.Component{
                   printedMonth    : [],
                   month_list      :  ["January","February","March","April","May","June","July","August","September","October","November","December"],
                   showMemoModal   : false,
-                  memolist        : [],
+                  memoList        : [],
                   selectedDate    : "",
                   selectedMonth   : "",
                   selectedYear    : "",
@@ -26,9 +26,13 @@ module.exports = class Calendar extends React.Component{
   }
   componentDidMount(){
     this.setState({calendar_month: this.state.month_list[this.state.month]});
-    this.showWeeks();
     $.ajax({url: '/api/memos'}).
-      done((memolist)=>{this.setState({memolist: memolist})})
+      done((memoList)=>{
+        this.setState({memoList: memoList})
+      }).
+      done(()=>{
+        this.showWeeks();
+      })
   }
   changeMonth(next,month = this.state.month){
     $("h1").addClass("rubberBand animated")
@@ -74,13 +78,17 @@ module.exports = class Calendar extends React.Component{
                               prevMonth: newPrevMonth, 
                               currentMonth: newCurrentMonth, 
                               monthIndex: this.state.month, 
-                              year: this.state.calendar_year}))
+                              year: this.state.calendar_year, 
+                              memoList: this.state.memoList}))
     for(var i = 1; i <= weeksInMonth-2; i++){
       show.push(React.createElement(ShowCurrentMonth, {toggleShowMemo: this.toggleShowMemo, 
                                     curWeek: i, 
                                     curMonth: newCurrentMonth, 
                                     prevMonthLength: newPrevMonth.length, 
                                     weekdayOfFirstDay: weekdayOfFirstDay, 
+                                    memoList: this.state.memoList, 
+                                    monthIndex: this.state.month, 
+                                    year: this.state.calendar_year, 
                                     key: i}))
     }
     show.push(React.createElement(ShowNextMonth, {toggleShowMemo: this.toggleShowMemo, 
@@ -155,7 +163,7 @@ module.exports = class CreateMemos extends React.Component{
     $.ajax({url:  "/api/memos",
             method: "POST",
             data: { year: this.props.year,
-                    month: this.props.monthIndex,
+                    month: this.props.monthIndex+1,
                     date: this.props.date,
                     content: content}
     }).done((result)=>{console.log(result)})
@@ -205,16 +213,24 @@ module.exports = class ShowCurrentMonth extends React.Component{
   componentDidMount(){
     $('.modal-trigger').leanModal();
   }
+  printMemos(day){
+    return this.props.memoList.map((memo)=>{
+      if(memo.date === day && memo.month === this.props.monthIndex+1 && memo.year === this.props.year){
+        console.log("yes")
+        return React.createElement("li", null, memo.content)
+      }
+    })
+  }
   showWeek(){
     var curWeek = this.props.curWeek+1,
         week    = this.props.curMonth.slice(((7*curWeek)-7-this.props.weekdayOfFirstDay),(7*curWeek-this.props.weekdayOfFirstDay))
-
     return(week.map((day,i)=>{
       return( React.createElement("td", {className: "current-month modal-trigger", 
                   onClick: ()=>{this.props.toggleShowMemo(day)}, 
                   key: i+1, 
                   href: "#memoModal"}, 
-                React.createElement("span", {className: "date"}, day)
+                React.createElement("span", {className: "date"}, day), 
+                React.createElement("ul", null, this.printMemos(day))
               ))
     }))
   }
