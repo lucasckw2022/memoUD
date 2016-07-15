@@ -7,14 +7,19 @@ module.exports = class CreateMemos extends React.Component{
   }
   submitForm(event){
     event.preventDefault();
-    var content = this.refs.memoContent.value.trim();
+    var content = this.refs.memoContent.value.trim(),
+    refreshData = this.props.refreshData
+    debugger
     $.ajax({url:  "/api/memos",
             method: "POST",
             data: { year: this.props.year,
                     month: this.props.monthIndex+1,
                     date: this.props.date,
                     content: content}
-    }).done((result)=>{console.log(result)})
+    }).done(()=>{
+      console.log("refreshed");
+      refreshData();
+    })
   }
   render(){
     return( <form>

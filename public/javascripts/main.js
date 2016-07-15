@@ -23,6 +23,7 @@ module.exports = class Calendar extends React.Component{
     this.changeMonth    = this.changeMonth.bind(this)
     this.showWeeks      = this.showWeeks.bind(this)
     this.toggleShowMemo = this.toggleShowMemo.bind(this)
+    this.componentDidMount = this.componentDidMount.bind(this)
   }
   componentDidMount(){
     this.setState({calendar_month: this.state.month_list[this.state.month]});
@@ -141,7 +142,8 @@ module.exports = class Calendar extends React.Component{
             React.createElement(ShowMemo, {year: this.state.selectedYear, 
                       month: this.state.selectedMonth, 
                       monthIndex: this.state.selectedMonthIndex, 
-                      date: this.state.selectedDate})
+                      date: this.state.selectedDate, 
+                      refreshData: this.componentDidMount})
           )
         )
       )
@@ -150,6 +152,13 @@ module.exports = class Calendar extends React.Component{
 }
 
 },{"./memo_show.jsx":4,"./show_current_month.jsx":5,"./show_next_month.jsx":6,"./show_prev_month.jsx":7,"react":441}],2:[function(require,module,exports){
+var React     = require('react');
+var ReactDOM  = require('react-dom');
+var Calendar  = require('./calendar_es6.jsx');
+
+ReactDOM.render(React.createElement(Calendar, null), document.getElementById('main'));
+
+},{"./calendar_es6.jsx":1,"react":441,"react-dom":274}],3:[function(require,module,exports){
 var React = require('react');
 
 module.exports = class CreateMemos extends React.Component{
@@ -159,14 +168,19 @@ module.exports = class CreateMemos extends React.Component{
   }
   submitForm(event){
     event.preventDefault();
-    var content = this.refs.memoContent.value.trim();
+    var content = this.refs.memoContent.value.trim(),
+    refreshData = this.props.refreshData
+    debugger
     $.ajax({url:  "/api/memos",
             method: "POST",
             data: { year: this.props.year,
                     month: this.props.monthIndex+1,
                     date: this.props.date,
                     content: content}
-    }).done((result)=>{console.log(result)})
+    }).done(()=>{
+      console.log("refreshed");
+      refreshData();
+    })
   }
   render(){
     return( React.createElement("form", null, 
@@ -177,17 +191,10 @@ module.exports = class CreateMemos extends React.Component{
   }
 }
 
-},{"react":441}],3:[function(require,module,exports){
-var React     = require('react');
-var ReactDOM  = require('react-dom');
-var Calendar  = require('./calendar_es6.jsx');
-
-ReactDOM.render(React.createElement(Calendar, null), document.getElementById('main'));
-
-},{"./calendar_es6.jsx":1,"react":441,"react-dom":274}],4:[function(require,module,exports){
+},{"react":441}],4:[function(require,module,exports){
 var React = require('react');
 var Modal = require('react-bootstrap').Modal;
-var CreateMemos = require('./create_memo.jsx');
+var CreateMemos = require('./memo_create.jsx');
 
 module.exports = class ShowMemo extends React.Component{
   render(){
@@ -199,14 +206,14 @@ module.exports = class ShowMemo extends React.Component{
         React.createElement("div", {id: "memoModal", className: "modal"}, 
           React.createElement("div", {className: "modal-content"}, 
             React.createElement("h1", null, date, " ", month, " ", year), 
-            React.createElement(CreateMemos, {year: year, monthIndex: monthIndex, date: date})
+            React.createElement(CreateMemos, {year: year, monthIndex: monthIndex, date: date, refreshData: this.props.refreshData})
           )
         )
     )
   }
 }
 
-},{"./create_memo.jsx":2,"react":441,"react-bootstrap":100}],5:[function(require,module,exports){
+},{"./memo_create.jsx":3,"react":441,"react-bootstrap":100}],5:[function(require,module,exports){
 var React = require('react');
 
 module.exports = class ShowCurrentMonth extends React.Component{
@@ -216,7 +223,6 @@ module.exports = class ShowCurrentMonth extends React.Component{
   printMemos(day){
     return this.props.memoList.map((memo)=>{
       if(memo.date === day && memo.month === this.props.monthIndex+1 && memo.year === this.props.year){
-        console.log("yes")
         return React.createElement("li", null, memo.content)
       }
     })
@@ -38748,4 +38754,4 @@ module.exports = shouldUseNative() ? Object.assign : function (target, source) {
 
 module.exports = require('./lib/React');
 
-},{"./lib/React":300}]},{},[3]);
+},{"./lib/React":300}]},{},[2]);

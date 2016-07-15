@@ -22,6 +22,7 @@ module.exports = class Calendar extends React.Component{
     this.changeMonth    = this.changeMonth.bind(this)
     this.showWeeks      = this.showWeeks.bind(this)
     this.toggleShowMemo = this.toggleShowMemo.bind(this)
+    this.componentDidMount = this.componentDidMount.bind(this)
   }
   componentDidMount(){
     this.setState({calendar_month: this.state.month_list[this.state.month]});
@@ -140,7 +141,8 @@ module.exports = class Calendar extends React.Component{
             <ShowMemo year       ={this.state.selectedYear}
                       month      ={this.state.selectedMonth}
                       monthIndex ={this.state.selectedMonthIndex}
-                      date       ={this.state.selectedDate} />
+                      date       ={this.state.selectedDate}
+                      refreshData={this.componentDidMount}/>
           </tbody>
         </table>
       </div>

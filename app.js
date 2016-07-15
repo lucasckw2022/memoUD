@@ -26,10 +26,10 @@ router.route('/memos')
       memo.year = req.body.year;
       memo.month = req.body.month;
       memo.date = req.body.date;
-      memo.save((err)=>{
+      memo.save((err,memos)=>{
         if(err){
-          res.send(err);
-        }
+          res.send(err);}
+          res.json(201,memos)
       })
     })
     .get((req,res)=>{

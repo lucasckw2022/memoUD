@@ -7,7 +7,6 @@ module.exports = class ShowCurrentMonth extends React.Component{
   printMemos(day){
     return this.props.memoList.map((memo)=>{
       if(memo.date === day && memo.month === this.props.monthIndex+1 && memo.year === this.props.year){
-        console.log("yes")
         return <li>{memo.content}</li>
       }
     })

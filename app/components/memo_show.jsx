@@ -1,6 +1,6 @@
 var React = require('react');
 var Modal = require('react-bootstrap').Modal;
-var CreateMemos = require('./create_memo.jsx');
+var CreateMemos = require('./memo_create.jsx');
 
 module.exports = class ShowMemo extends React.Component{
   render(){
@@ -12,7 +12,7 @@ module.exports = class ShowMemo extends React.Component{
         <div id="memoModal" className="modal">
           <div className="modal-content">
             <h1>{date} {month} {year}</h1>
-            <CreateMemos year={year} monthIndex={monthIndex} date={date}/>
+            <CreateMemos year={year} monthIndex={monthIndex} date={date} refreshData={this.props.refreshData}/>
           </div>
         </div>
     )
