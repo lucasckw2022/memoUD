@@ -96,7 +96,8 @@ module.exports = class Calendar extends React.Component{
                               currentMonth      ={newCurrentMonth}
                               weekdayOflastDay  ={weekdayOflastDay}
                               monthIndex        ={this.state.month}
-                              year              ={this.state.calendar_year} />)
+                              year              ={this.state.calendar_year}
+                              memoList          ={this.state.memoList} />)
     this.setState({printedMonth: show});
   }
   toggleShowMemo(date,month = this.state.month,year = this.state.calendar_year){

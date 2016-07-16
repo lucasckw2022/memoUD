@@ -97,7 +97,8 @@ module.exports = class Calendar extends React.Component{
                               currentMonth: newCurrentMonth, 
                               weekdayOflastDay: weekdayOflastDay, 
                               monthIndex: this.state.month, 
-                              year: this.state.calendar_year}))
+                              year: this.state.calendar_year, 
+                              memoList: this.state.memoList}))
     this.setState({printedMonth: show});
   }
   toggleShowMemo(date,month = this.state.month,year = this.state.calendar_year){
@@ -169,8 +170,8 @@ module.exports = class CreateMemos extends React.Component{
   submitForm(event){
     event.preventDefault();
     var content = this.refs.memoContent.value.trim(),
-    refreshData = this.props.refreshData
-    debugger
+    refreshData = this.props.refreshData;
+    
     $.ajax({url:  "/api/memos",
             method: "POST",
             data: { year: this.props.year,
@@ -206,6 +207,7 @@ module.exports = class ShowMemo extends React.Component{
         React.createElement("div", {id: "memoModal", className: "modal"}, 
           React.createElement("div", {className: "modal-content"}, 
             React.createElement("h1", null, date, " ", month, " ", year), 
+            React.createElement("ul", null), 
             React.createElement(CreateMemos, {year: year, monthIndex: monthIndex, date: date, refreshData: this.props.refreshData})
           )
         )
@@ -217,13 +219,19 @@ module.exports = class ShowMemo extends React.Component{
 var React = require('react');
 
 module.exports = class ShowCurrentMonth extends React.Component{
+  constructor(props){
+    super(props)
+    this.state = {memos: []}
+  }
   componentDidMount(){
     $('.modal-trigger').leanModal();
   }
   printMemos(day){
-    return this.props.memoList.map((memo)=>{
+    var temp = []
+    return this.props.memoList.map((memo,index)=>{
       if(memo.date === day && memo.month === this.props.monthIndex+1 && memo.year === this.props.year){
-        return React.createElement("li", null, memo.content)
+        ()=>{this.setState({memos: this.state.memos.concat(React.createElement("li", {key: index}, memo.content))})}
+        return React.createElement("li", {key: index}, memo.content)
       }
     })
   }
@@ -251,6 +259,13 @@ module.exports = class ShowNextMonth extends React.Component{
   componentDidMount(){
     $('.modal-trigger').leanModal();
   }
+  printMemos(day,month,year){
+    return this.props.memoList.map((memo,index)=>{
+      if(memo.date === day && memo.month === month && memo.year === year){
+        return React.createElement("li", {key: index}, memo.content)
+      }
+    })
+  }
   showNextWeek(){
     var nextMonth = this.props.currentMonth.slice(this.props.currentMonth.length-(this.props.weekdayOflastDay+1),this.props.currentMonth.length),
     month         = this.props.monthIndex+1 > 11 ? 0 : this.props.monthIndex+1,
@@ -263,14 +278,16 @@ module.exports = class ShowNextMonth extends React.Component{
                     onClick: ()=>{this.props.toggleShowMemo(day)}, 
                     key: i+1, 
                     href: "#memoModal"}, 
-                  React.createElement("span", {className: "date"}, day)
+                  React.createElement("span", {className: "date"}, day), 
+                  React.createElement("ul", null, this.printMemos(day,month+2,year))
                 ))
       } else{
         return( React.createElement("td", {className: "next-month modal-trigger", 
                     onClick: ()=>{this.props.toggleShowMemo(day,month,year)}, 
                     key: i+1, 
                     href: "#memoModal"}, 
-                  React.createElement("span", {className: "date"}, day)
+                  React.createElement("span", {className: "date"}, day), 
+                  React.createElement("ul", null, this.printMemos(day,month+1,year))
                 ))
       }
     }))
@@ -286,6 +303,13 @@ module.exports = class ShowPrevMonth extends React.Component{
   componentDidMount(){
     $('.modal-trigger').leanModal();
   }
+  printMemos(day,month,year){
+    return this.props.memoList.map((memo,index)=>{
+      if(memo.date === day && memo.month === month && memo.year === year){
+        return React.createElement("li", {key: index}, memo.content)
+      }
+    })
+  }
   showPrevWeek(){
     var prevMonth = this.props.prevMonth,
         month     = this.props.monthIndex-1 < 0 ? 11 : this.props.monthIndex-1,
@@ -298,14 +322,16 @@ module.exports = class ShowPrevMonth extends React.Component{
                     onClick: ()=>{this.props.toggleShowMemo(day,month,year)}, 
                     key: i+1, 
                     href: "#memoModal"}, 
-                  React.createElement("span", {className: "date"}, day)
+                  React.createElement("span", {className: "date"}, day), 
+                  React.createElement("ul", null, this.printMemos(day,month+1,year))
                 ))
       } else{
         return( React.createElement("td", {className: "current-month modal-trigger", 
                     onClick: ()=>{this.props.toggleShowMemo(day)}, 
                     key: i+1, 
                     href: "#memoModal"}, 
-                  React.createElement("span", {className: "date"}, day)
+                  React.createElement("span", {className: "date"}, day), 
+                  React.createElement("ul", null, this.printMemos(day,month+2,year))
                 ))
       }
     }))

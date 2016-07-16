@@ -12,6 +12,7 @@ module.exports = class ShowMemo extends React.Component{
         <div id="memoModal" className="modal">
           <div className="modal-content">
             <h1>{date} {month} {year}</h1>
+            <ul></ul>
             <CreateMemos year={year} monthIndex={monthIndex} date={date} refreshData={this.props.refreshData}/>
           </div>
         </div>
