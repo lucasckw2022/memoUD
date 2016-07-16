@@ -4,13 +4,6 @@ module.exports = class ShowPrevMonth extends React.Component{
   componentDidMount(){
     $('.modal-trigger').leanModal();
   }
-  printMemos(day,month,year){
-    return this.props.memoList.map((memo,index)=>{
-      if(memo.date === day && memo.month === month && memo.year === year){
-        return <li key={index}>{memo.content}</li>
-      }
-    })
-  }
   showPrevWeek(){
     var prevMonth = this.props.prevMonth,
         month     = this.props.monthIndex-1 < 0 ? 11 : this.props.monthIndex-1,
@@ -24,7 +17,7 @@ module.exports = class ShowPrevMonth extends React.Component{
                     key={i+1}
                     href="#memoModal">
                   <span className="date">{day}</span>
-                  <ul>{this.printMemos(day,month+1,year)}</ul>
+                  <ul>{this.props.printMemos(day,month+1,year)}</ul>
                 </td>)
       } else{
         return( <td className="current-month modal-trigger"
@@ -32,7 +25,7 @@ module.exports = class ShowPrevMonth extends React.Component{
                     key={i+1}
                     href="#memoModal">
                   <span className="date">{day}</span>
-                  <ul>{this.printMemos(day,month+2,year)}</ul>
+                  <ul>{this.props.printMemos(day,month+2,year)}</ul>
                 </td>)
       }
     }))

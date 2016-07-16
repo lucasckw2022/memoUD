@@ -7,13 +7,13 @@ module.exports = class ShowMemo extends React.Component{
     var year        = this.props.year,
         month       = this.props.month,
         monthIndex  = this.props.monthIndex,
-        date        = this.props.date
+        day        = this.props.date
     return(
         <div id="memoModal" className="modal">
           <div className="modal-content">
-            <h1>{date} {month} {year}</h1>
-            <ul></ul>
-            <CreateMemos year={year} monthIndex={monthIndex} date={date} refreshData={this.props.refreshData}/>
+            <h1>{day} {month} {year}</h1>
+            <ul>{this.props.printMemos(day,monthIndex+1,year)}</ul>
+            <CreateMemos year={year} monthIndex={monthIndex} date={day} refreshData={this.props.refreshData}/>
           </div>
         </div>
     )
