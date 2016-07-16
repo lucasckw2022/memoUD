@@ -23,6 +23,7 @@ module.exports = class Calendar extends React.Component{
     this.showWeeks      = this.showWeeks.bind(this)
     this.toggleShowMemo = this.toggleShowMemo.bind(this)
     this.componentDidMount = this.componentDidMount.bind(this)
+    this.printMemos        = this.printMemos.bind(this)
   }
   componentDidMount(){
     this.setState({calendar_month: this.state.month_list[this.state.month]});
@@ -79,7 +80,8 @@ module.exports = class Calendar extends React.Component{
                               currentMonth    ={newCurrentMonth}
                               monthIndex      ={this.state.month}
                               year            ={this.state.calendar_year}
-                              memoList        ={this.state.memoList} />)
+                              memoList        ={this.state.memoList}
+                              printMemos      ={this.printMemos} />)
     for(var i = 1; i <= weeksInMonth-2; i++){
       show.push(<ShowCurrentMonth   toggleShowMemo    ={this.toggleShowMemo}
                                     curWeek           ={i}
@@ -89,6 +91,7 @@ module.exports = class Calendar extends React.Component{
                                     memoList          ={this.state.memoList}
                                     monthIndex        ={this.state.month}
                                     year              ={this.state.calendar_year}
+                                    printMemos        ={this.printMemos}
                                     key               ={i} />)
     }
     show.push(<ShowNextMonth  toggleShowMemo    ={this.toggleShowMemo}
@@ -97,7 +100,8 @@ module.exports = class Calendar extends React.Component{
                               weekdayOflastDay  ={weekdayOflastDay}
                               monthIndex        ={this.state.month}
                               year              ={this.state.calendar_year}
-                              memoList          ={this.state.memoList} />)
+                              memoList          ={this.state.memoList}
+                              printMemos        ={this.printMemos} />)
     this.setState({printedMonth: show});
   }
   toggleShowMemo(date,month = this.state.month,year = this.state.calendar_year){
@@ -106,6 +110,15 @@ module.exports = class Calendar extends React.Component{
                     selectedMonth     : this.state.month_list[month],
                     selectedMonthIndex: month,
                     selectedYear      : year})
+  }
+  printMemos(day,month,year){
+    if(this.state.memoList){
+      return this.state.memoList.map((memo,index)=>{
+        if(memo.date === day && memo.month === month && memo.year === year){
+          return <li key={index}>{memo.content}</li>
+        }
+      })
+    }
   }
   render(){
     return(
@@ -144,7 +157,8 @@ module.exports = class Calendar extends React.Component{
                       monthIndex ={this.state.selectedMonthIndex}
                       date       ={this.state.selectedDate}
                       refreshData={this.componentDidMount}
-                      memoList   ={this.state.memoList}/>
+                      memoList   ={this.state.memoList}
+                      printMemos ={this.printMemos} />
           </tbody>
         </table>
       </div>
