@@ -144,7 +144,8 @@ module.exports = class Calendar extends React.Component{
                       month: this.state.selectedMonth, 
                       monthIndex: this.state.selectedMonthIndex, 
                       date: this.state.selectedDate, 
-                      refreshData: this.componentDidMount})
+                      refreshData: this.componentDidMount, 
+                      memoList: this.state.memoList})
           )
         )
       )
@@ -198,17 +199,25 @@ var Modal = require('react-bootstrap').Modal;
 var CreateMemos = require('./memo_create.jsx');
 
 module.exports = class ShowMemo extends React.Component{
+  printMemos(day,monthIndex,year){
+    debugger
+    return this.props.memoList.map((memo,index)=>{
+      if(memo.date === day && memo.month === monthIndex+1 && memo.year === year){
+        return React.createElement("li", {key: index}, memo.content)
+      }
+    })
+  }
   render(){
     var year        = this.props.year,
         month       = this.props.month,
         monthIndex  = this.props.monthIndex,
-        date        = this.props.date
+        day        = this.props.date
     return(
         React.createElement("div", {id: "memoModal", className: "modal"}, 
           React.createElement("div", {className: "modal-content"}, 
-            React.createElement("h1", null, date, " ", month, " ", year), 
-            React.createElement("ul", null), 
-            React.createElement(CreateMemos, {year: year, monthIndex: monthIndex, date: date, refreshData: this.props.refreshData})
+            React.createElement("h1", null, day, " ", month, " ", year), 
+            React.createElement("ul", null, this.printMemos(day,monthIndex,year)), 
+            React.createElement(CreateMemos, {year: year, monthIndex: monthIndex, date: day, refreshData: this.props.refreshData})
           )
         )
     )
@@ -219,18 +228,12 @@ module.exports = class ShowMemo extends React.Component{
 var React = require('react');
 
 module.exports = class ShowCurrentMonth extends React.Component{
-  constructor(props){
-    super(props)
-    this.state = {memos: []}
-  }
   componentDidMount(){
     $('.modal-trigger').leanModal();
   }
   printMemos(day){
-    var temp = []
     return this.props.memoList.map((memo,index)=>{
       if(memo.date === day && memo.month === this.props.monthIndex+1 && memo.year === this.props.year){
-        ()=>{this.setState({memos: this.state.memos.concat(React.createElement("li", {key: index}, memo.content))})}
         return React.createElement("li", {key: index}, memo.content)
       }
     })

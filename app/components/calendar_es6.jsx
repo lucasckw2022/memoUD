@@ -143,7 +143,8 @@ module.exports = class Calendar extends React.Component{
                       month      ={this.state.selectedMonth}
                       monthIndex ={this.state.selectedMonthIndex}
                       date       ={this.state.selectedDate}
-                      refreshData={this.componentDidMount}/>
+                      refreshData={this.componentDidMount}
+                      memoList   ={this.state.memoList}/>
           </tbody>
         </table>
       </div>

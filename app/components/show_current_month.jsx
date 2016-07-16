@@ -1,18 +1,12 @@
 var React = require('react');
 
 module.exports = class ShowCurrentMonth extends React.Component{
-  constructor(props){
-    super(props)
-    this.state = {memos: []}
-  }
   componentDidMount(){
     $('.modal-trigger').leanModal();
   }
   printMemos(day){
-    var temp = []
     return this.props.memoList.map((memo,index)=>{
       if(memo.date === day && memo.month === this.props.monthIndex+1 && memo.year === this.props.year){
-        ()=>{this.setState({memos: this.state.memos.concat(<li key={index}>{memo.content}</li>)})}
         return <li key={index}>{memo.content}</li>
       }
     })
