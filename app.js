@@ -54,7 +54,7 @@ router.route('/memos/:memo_id')
       Memos.findById(req.params.memo_id,(err,memo)=>{
         if(err){
           res.send(err);}
-        memo.year = req.body.year
+        memo.content = req.body.content
         memo.save((err)=>{
           if(err){
             res.send(err);}

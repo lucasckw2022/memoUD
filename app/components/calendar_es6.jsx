@@ -18,12 +18,15 @@ module.exports = class Calendar extends React.Component{
                   selectedDate    : "",
                   selectedMonth   : "",
                   selectedYear    : "",
-                  selectedMonthIndex: ""}
+                  selectedMonthIndex: "",
+                  memoFormStatus  : false,
+                  selectedMemoId    : ""}
     this.changeMonth    = this.changeMonth.bind(this)
     this.showWeeks      = this.showWeeks.bind(this)
     this.toggleShowMemo = this.toggleShowMemo.bind(this)
     this.componentDidMount = this.componentDidMount.bind(this)
     this.printMemos        = this.printMemos.bind(this)
+    this.toggleMemoForm      = this.toggleMemoForm.bind(this)
   }
   componentDidMount(){
     this.setState({calendar_month: this.state.month_list[this.state.month]});
@@ -109,16 +112,46 @@ module.exports = class Calendar extends React.Component{
                     selectedDate      : date,
                     selectedMonth     : this.state.month_list[month],
                     selectedMonthIndex: month,
-                    selectedYear      : year})
+                    selectedYear      : year,
+                    memoFormStatus    : false})
   }
-  printMemos(day,month,year){
+  printMemos(day,month,year,modal = false){
     if(this.state.memoList){
       return this.state.memoList.map((memo,index)=>{
         if(memo.date === day && memo.month === month && memo.year === year){
-          return <li key={index}>{memo.content}</li>
+          return (
+            <li key={index}>
+              {memo.content}
+              {modal ?
+                <div>
+                  <span className="btn"
+                        onClick={()=>{this.deleteMemo(memo._id)}}>Delete</span>
+                  <span className="btn"
+                        onClick={()=>{this.editMemo(memo._id)}}>Edit</span>
+                </div>
+                :
+                ""}
+            </li>
+          )
         }
       })
     }
+  }
+  deleteMemo(memoId){
+    var confirmMsg = confirm("Are you sure to delete this memo?");
+    if(confirmMsg){
+      $.ajax({url   : "/api/memos/"+memoId.toString(),
+              method: "DELETE"}).
+              done(()=>{this.setState({showMemoModal: false});
+                        this.componentDidMount();})
+    }
+  }
+  editMemo(memoId){
+    this.setState({ memoFormStatus: "PUT",
+                    selectedMemoId: "/"+memoId})
+  }
+  toggleMemoForm(status = false){
+    this.setState({ memoFormStatus: status})
   }
   render(){
     return(
@@ -158,7 +191,10 @@ module.exports = class Calendar extends React.Component{
                       date       ={this.state.selectedDate}
                       refreshData={this.componentDidMount}
                       memoList   ={this.state.memoList}
-                      printMemos ={this.printMemos} />
+                      printMemos ={this.printMemos}
+                      memoFormStatus = {this.state.memoFormStatus}
+                      selectedMemoId = {this.state.selectedMemoId}
+                      toggleMemoForm = {this.toggleMemoForm}/>
           </tbody>
         </table>
       </div>

@@ -19,12 +19,15 @@ module.exports = class Calendar extends React.Component{
                   selectedDate    : "",
                   selectedMonth   : "",
                   selectedYear    : "",
-                  selectedMonthIndex: ""}
+                  selectedMonthIndex: "",
+                  memoFormStatus  : false,
+                  selectedMemoId    : ""}
     this.changeMonth    = this.changeMonth.bind(this)
     this.showWeeks      = this.showWeeks.bind(this)
     this.toggleShowMemo = this.toggleShowMemo.bind(this)
     this.componentDidMount = this.componentDidMount.bind(this)
     this.printMemos        = this.printMemos.bind(this)
+    this.toggleMemoForm      = this.toggleMemoForm.bind(this)
   }
   componentDidMount(){
     this.setState({calendar_month: this.state.month_list[this.state.month]});
@@ -110,16 +113,46 @@ module.exports = class Calendar extends React.Component{
                     selectedDate      : date,
                     selectedMonth     : this.state.month_list[month],
                     selectedMonthIndex: month,
-                    selectedYear      : year})
+                    selectedYear      : year,
+                    memoFormStatus    : false})
   }
-  printMemos(day,month,year){
+  printMemos(day,month,year,modal = false){
     if(this.state.memoList){
       return this.state.memoList.map((memo,index)=>{
         if(memo.date === day && memo.month === month && memo.year === year){
-          return React.createElement("li", {key: index}, memo.content)
+          return (
+            React.createElement("li", {key: index}, 
+              memo.content, 
+              modal ?
+                React.createElement("div", null, 
+                  React.createElement("span", {className: "btn", 
+                        onClick: ()=>{this.deleteMemo(memo._id)}}, "Delete"), 
+                  React.createElement("span", {className: "btn", 
+                        onClick: ()=>{this.editMemo(memo._id)}}, "Edit")
+                )
+                :
+                ""
+            )
+          )
         }
       })
     }
+  }
+  deleteMemo(memoId){
+    var confirmMsg = confirm("Are you sure to delete this memo?");
+    if(confirmMsg){
+      $.ajax({url   : "/api/memos/"+memoId.toString(),
+              method: "DELETE"}).
+              done(()=>{this.setState({showMemoModal: false});
+                        this.componentDidMount();})
+    }
+  }
+  editMemo(memoId){
+    this.setState({ memoFormStatus: "PUT",
+                    selectedMemoId: "/"+memoId})
+  }
+  toggleMemoForm(status = false){
+    this.setState({ memoFormStatus: status})
   }
   render(){
     return(
@@ -159,7 +192,10 @@ module.exports = class Calendar extends React.Component{
                       date: this.state.selectedDate, 
                       refreshData: this.componentDidMount, 
                       memoList: this.state.memoList, 
-                      printMemos: this.printMemos})
+                      printMemos: this.printMemos, 
+                      memoFormStatus: this.state.memoFormStatus, 
+                      selectedMemoId: this.state.selectedMemoId, 
+                      toggleMemoForm: this.toggleMemoForm})
           )
         )
       )
@@ -180,28 +216,50 @@ var React = require('react');
 module.exports = class CreateMemos extends React.Component{
   constructor(props){
     super(props)
+    this.state = {buttonClass   : "btn disabled"}
     this.submitForm = this.submitForm.bind(this)
+    this.disableButton = this.disableButton.bind(this)
   }
   submitForm(event){
     event.preventDefault();
     var content = this.refs.memoContent.value.trim(),
-    refreshData = this.props.refreshData;
-    
-    $.ajax({url:  "/api/memos",
-            method: "POST",
+        memoId  = this.props.memoFromStatus == "POST" ?
+                    "" : this.props.selectedMemoId,
+        refreshData = this.props.refreshData
+    debugger
+    $.ajax({url:  "/api/memos"+memoId,
+            method: this.props.memoFormStatus,
             data: { year: this.props.year,
                     month: this.props.monthIndex+1,
                     date: this.props.date,
                     content: content}
     }).done(()=>{
-      console.log("refreshed");
       refreshData();
+      this.props.toggleMemoForm();
     })
   }
+  disableButton(){
+    return this.refs.memoContent.value ?
+      this.setState({buttonClass: "btn"})
+      :
+      this.setState({buttonClass: "btn disabled"})
+  }
+  memoForm(){
+    if(this.props.memoFormStatus){
+      return(
+        React.createElement("div", null, 
+          this.props.memoFormStatus == "POST" ? React.createElement("h4", null, "Create Memo") : React.createElement("h4", null, "Edit Memo"), 
+          React.createElement("form", null, 
+            React.createElement("textarea", {id: "memoContent", ref: "memoContent", className: "materialize-textarea", onKeyUp: this.disableButton}), 
+            React.createElement("div", {type: "submit", className: this.state.buttonClass, onClick: this.submitForm}, "Create Memo", React.createElement("i", {className: "small material-icons right"}, "send"))
+          )
+        )
+      )
+    }
+  }
   render(){
-    return( React.createElement("form", null, 
-                React.createElement("textarea", {id: "memoContent", ref: "memoContent", className: "materialize-textarea"}), 
-                React.createElement("div", {type: "submit", className: "btn", onClick: this.submitForm}, "Create Memo")
+    return( React.createElement("div", null, 
+              this.memoForm()
             )
     )
   }
@@ -217,13 +275,21 @@ module.exports = class ShowMemo extends React.Component{
     var year        = this.props.year,
         month       = this.props.month,
         monthIndex  = this.props.monthIndex,
-        day        = this.props.date
+        day         = this.props.date
     return(
         React.createElement("div", {id: "memoModal", className: "modal"}, 
           React.createElement("div", {className: "modal-content"}, 
             React.createElement("h1", null, day, " ", month, " ", year), 
-            React.createElement("ul", null, this.props.printMemos(day,monthIndex+1,year)), 
-            React.createElement(CreateMemos, {year: year, monthIndex: monthIndex, date: day, refreshData: this.props.refreshData})
+            React.createElement("div", {className: "btn", 
+                  onClick: ()=>{this.props.toggleMemoForm("POST")}}, 
+                    "Create Memos", 
+                    React.createElement("i", {className: "material-icons right"}, "add")
+            ), 
+            React.createElement("ul", null, this.props.printMemos(day,monthIndex+1,year,true)), 
+            React.createElement(CreateMemos, {year: year, 
+                          monthIndex: monthIndex, 
+                          date: day, 
+                          refreshData: this.props.refreshData, memoFormStatus: this.props.memoFormStatus, selectedMemoId: this.props.selectedMemoId, toggleMemoForm: this.props.toggleMemoForm})
           )
         )
     )
