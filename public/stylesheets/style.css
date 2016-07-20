@@ -1,16 +1,38 @@
 body {
-  padding: 50px;
+  padding: 0 50px;
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif; }
-  body table.borderless th {
-    border: none;
+  body h1 {
+    display: inline-block; }
+  body .selected-calendar {
+    margin: 3em 0 0 0; }
+  body .changeMonth {
+    display: inline-block;
+    cursor: pointer; }
+  body .selected-month {
+    display: inline-block;
+    font-size: 30px;
+    margin: 15px;
+    width: 230px; }
+  body table.row th.col {
+    float: none; }
+  body table.row .changeMonth {
+    cursor: pointer; }
+  body table.row .weekday {
     text-align: center; }
-    body table.borderless th .changeMonth {
-      cursor: pointer; }
-  body table.borderless .weekday {
-    text-align: center; }
-  body tr.weeks td.prev-month {
-    color: red; }
-  body tr.weeks td.current-month {
-    color: green; }
-  body tr.weeks td.next-month {
-    color: blue; }
+    body table.row .weekday th {
+      padding: 0 0 10px 0; }
+  body table.row tr.weeks {
+    height: 90px; }
+    body table.row tr.weeks td.prev-month {
+      background-color: #D3D3D3; }
+      body table.row tr.weeks td.prev-month .date {
+        font-weight: 700; }
+    body table.row tr.weeks td.current-month {
+      background-color: #68732e;
+      color: #FFF; }
+      body table.row tr.weeks td.current-month .date {
+        font-weight: 700; }
+    body table.row tr.weeks td.next-month {
+      background-color: #D3D3D3; }
+      body table.row tr.weeks td.next-month .date {
+        font-weight: 700; }

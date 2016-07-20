@@ -1,33 +1,71 @@
 body {
-  padding: 50px;
+  padding: 0 50px;
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
 
-  table.borderless {
-    th {
-      border: none;
-      text-align: center;
+  h1 {
+    display: inline-block;
+  }
 
-      .changeMonth {
-        cursor: pointer;
-      }
+  .selected-calendar {
+    margin: 3em 0 0 0;
+  }
+
+  .changeMonth {
+    display: inline-block;
+    cursor: pointer;
+  }
+
+  .selected-month {
+    display: inline-block;
+    font-size: 30px;
+    margin: 15px;
+    width: 230px;
+  }
+
+  table.row {
+    th.col {
+      float:none;
     }
+
+    .changeMonth {
+      cursor: pointer;
+    }
+
     .weekday {
       text-align: center;
+      th {
+        padding: 0 0 10px 0;
+      }
+    }
+
+    tr.weeks {
+      height: 90px;
+
+      td.prev-month {
+        background-color: #D3D3D3;
+
+        .date {
+          font-weight: 700;
+        }
+      }
+
+      td.current-month {
+        background-color: #68732e;
+        color: #FFF;
+        
+        .date {
+          font-weight: 700;
+        }
+      }
+
+      td.next-month {
+        background-color: #D3D3D3;
+
+        .date {
+          font-weight: 700;
+        }
+      }
+
     }
   }
-
-  tr.weeks {
-    td.prev-month {
-      color: red;
-    }
-
-    td.current-month {
-      color: green;
-    }
-
-    td.next-month {
-      color: blue;
-    }
-  }
-
 }

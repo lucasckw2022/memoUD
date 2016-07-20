@@ -50,7 +50,7 @@ router.route('/memos/:memo_id')
         res.json(memo);
       })
     })
-    .put((req,res)=>{
+    .patch((req,res)=>{
       Memos.findById(req.params.memo_id,(err,memo)=>{
         if(err){
           res.send(err);}
