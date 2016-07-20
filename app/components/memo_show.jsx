@@ -12,7 +12,7 @@ module.exports = class ShowMemo extends React.Component{
         <div  id        ="memoModal"
               className ="modal">
           <div className="modal-content">
-            <h2>{day} {month} {year}</h2>
+            <h3>{day} {month} {year}</h3>
             <div  className="btn"
                   onClick={()=>{this.props.toggleMemoForm("POST")}}>
                     Create Memos

@@ -1,71 +1,77 @@
-body {
-  padding: 0 50px;
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+html {
+  background: url(https://rborg42.files.wordpress.com/2012/12/forest1.png) no-repeat;
+  background-size: cover;
 
-  h1 {
-    display: inline-block;
-  }
+  body {
+    padding: 0 50px;
+    font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+    color: #1f220d;
 
-  .selected-calendar {
-    margin: 3em 0 0 0;
-  }
+    h1 {
+      display: inline-block;
+    }
 
-  .changeMonth {
-    display: inline-block;
-    cursor: pointer;
-  }
-
-  .selected-month {
-    display: inline-block;
-    font-size: 30px;
-    margin: 15px;
-    width: 230px;
-  }
-
-  table.row {
-    th.col {
-      float:none;
+    .selected-calendar {
+      margin: 3em 0 0 0;
     }
 
     .changeMonth {
+      display: inline-block;
       cursor: pointer;
     }
 
-    .weekday {
-      text-align: center;
-      th {
-        padding: 0 0 10px 0;
-      }
+    .selected-month {
+      display: inline-block;
+      font-size: 30px;
+      margin: 15px;
+      width: 230px;
     }
 
-    tr.weeks {
-      height: 90px;
+    table.row {
+      th.col {
+        float:none;
+      }
 
-      td.prev-month {
-        background-color: #D3D3D3;
+      .changeMonth {
+        cursor: pointer;
+      }
 
-        .date {
-          font-weight: 700;
+      .weekday {
+        text-align: center;
+        th {
+          padding: 0 0 10px 0;
         }
       }
 
-      td.current-month {
-        background-color: #68732e;
-        color: #FFF;
-        
-        .date {
-          font-weight: 700;
+      tr.weeks {
+        height: 90px;
+
+        td.prev-month {
+          background-color: #D3D3D3;
+
+          .date {
+            font-weight: 700;
+          }
         }
-      }
 
-      td.next-month {
-        background-color: #D3D3D3;
+        td.current-month {
+          background-color: rgba(104,115,46,0.9);
+          color: #FFF;
 
-        .date {
-          font-weight: 700;
+          .date {
+            font-weight: 700;
+          }
         }
-      }
 
+        td.next-month {
+          background-color: #D3D3D3;
+
+          .date {
+            font-weight: 700;
+          }
+        }
+
+      }
     }
   }
 }
