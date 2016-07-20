@@ -10,7 +10,7 @@ var cookieParser  = require('cookie-parser');
 var port          = process.env.PORT || 3000;
 // setup server
 var mongoose      = require('mongoose');
-mongoose.connect('mongodb://localhost/memodbtest');
+mongoose.connect('MONGOLAB_URI');
 var router        = express.Router();
 var Memos         = require('./public/javascripts/models/memos');
 // Memos.aggregate([{$project: {year: "$year"}}]);
