@@ -8,23 +8,26 @@ var ShowMemo          = require('./memo_show.jsx');
 module.exports = class Calendar extends React.Component{
   constructor(props){
     super(props);
-    this.state = {today           : new Date(),
-                  calendar_month  : "",
-                  calendar_year   : new Date().getFullYear(),
-                  month           : new Date().getMonth(),
-                  printedMonth    : [],
-                  month_list      :  ["January","February","March","April","May","June","July","August","September","October","November","December"],
-                  showMemoModal   : false,
-                  memoList        : [],
-                  selectedDate    : "",
-                  selectedMonth   : "",
-                  selectedYear    : "",
-                  selectedMonthIndex: ""}
-    this.changeMonth    = this.changeMonth.bind(this)
-    this.showWeeks      = this.showWeeks.bind(this)
-    this.toggleShowMemo = this.toggleShowMemo.bind(this)
-    this.componentDidMount = this.componentDidMount.bind(this)
-    this.printMemos        = this.printMemos.bind(this)
+    this.state = {today             : new Date(),
+                  calendar_month    : "",
+                  calendar_year     : new Date().getFullYear(),
+                  month             : new Date().getMonth(),
+                  printedMonth      : [],
+                  month_list        :  ["January","February","March","April","May","June","July","August","September","October","November","December"],
+                  showMemoModal     : false,
+                  memoList          : [],
+                  selectedDate      : "",
+                  selectedMonth     : "",
+                  selectedYear      : "",
+                  selectedMonthIndex: "",
+                  memoFormStatus    : false,
+                  selectedMemoId    : ""}
+    this.changeMonth         = this.changeMonth.bind(this)
+    this.showWeeks           = this.showWeeks.bind(this)
+    this.toggleShowMemo      = this.toggleShowMemo.bind(this)
+    this.componentDidMount   = this.componentDidMount.bind(this)
+    this.printMemos          = this.printMemos.bind(this)
+    this.toggleMemoForm      = this.toggleMemoForm.bind(this)
   }
   componentDidMount(){
     this.setState({calendar_month: this.state.month_list[this.state.month]});
@@ -110,47 +113,76 @@ module.exports = class Calendar extends React.Component{
                     selectedDate      : date,
                     selectedMonth     : this.state.month_list[month],
                     selectedMonthIndex: month,
-                    selectedYear      : year})
+                    selectedYear      : year,
+                    memoFormStatus    : false})
   }
-  printMemos(day,month,year){
+  printMemos(day,month,year,modal = false){
     if(this.state.memoList){
       return this.state.memoList.map((memo,index)=>{
         if(memo.date === day && memo.month === month && memo.year === year){
-          return React.createElement("li", {key: index}, memo.content)
+          return (
+            React.createElement("li", {key: index}, 
+              memo.content, 
+              modal ?
+                React.createElement("div", null, 
+                  React.createElement("span", {className: "btn", 
+                        onClick: ()=>{this.deleteMemo(memo._id)}}, "Delete"), 
+                  React.createElement("span", {className: "btn", 
+                        onClick: ()=>{this.editMemo(memo._id)}}, "Edit")
+                )
+                :
+                ""
+            )
+          )
         }
       })
     }
   }
+  deleteMemo(memoId){
+    var confirmMsg = confirm("Are you sure to delete this memo?");
+    if(confirmMsg){
+      $.ajax({url   : "/api/memos/"+memoId.toString(),
+              method: "DELETE"}).
+              done(()=>{this.setState({showMemoModal: false});
+                        this.componentDidMount();})
+    }
+  }
+  editMemo(memoId){
+    // this.setState({ memoFormStatus: "PUT",
+    //                 selectedMemoId: "/"+memoId})
+    this.toggleMemoForm("PATCH",memoId)
+  }
+  toggleMemoForm(status = false,memoId = ""){
+    this.setState({ memoFormStatus: status,
+                    selectedMemoId: memoId})
+  }
   render(){
     return(
       React.createElement("div", null, 
-      React.createElement("h1", null, "MemoUD"), 
-        React.createElement("table", {className: "table borderless"}, 
+        React.createElement("h1", null, "MemoUD"), 
+        React.createElement("div", {className: "selected-calendar right"}, 
+          React.createElement("div", {className: "changeMonth", 
+                onClick: ()=>this.changeMonth(false,this.state.month)}, 
+            React.createElement("i", {className: "material-icons"}, "arrow_back")
+          ), 
+          React.createElement("div", {className: "selected-month center"}, 
+            this.state.calendar_month, " ", this.state.calendar_year
+          ), 
+          React.createElement("div", {className: "changeMonth", 
+                onClick: ()=>this.changeMonth(true,this.state.month)}, 
+            React.createElement("i", {className: "material-icons"}, "arrow_forward")
+          )
+        ), 
+        React.createElement("table", {className: "row"}, 
           React.createElement("tbody", null, 
-            React.createElement("tr", null, 
-              React.createElement("th", {className: "col-sm-3", colSpan: "3"}), 
-              React.createElement("th", {className: "col-sm-1"}, 
-                React.createElement("span", {className: "changeMonth", onClick: ()=>this.changeMonth(false,this.state.month)}, 
-                  "Prev"
-                )
-              ), 
-              React.createElement("th", {className: "col-sm-2", colSpan: "2"}, 
-                this.state.calendar_month, " ", this.state.calendar_year
-              ), 
-              React.createElement("th", {className: "col-sm-1"}, 
-                React.createElement("span", {className: "changeMonth", onClick: ()=>this.changeMonth(true,this.state.month)}, 
-                  "Next"
-                )
-              )
-            ), 
             React.createElement("tr", {className: "weekday"}, 
-              React.createElement("td", null, "Sunday"), 
-              React.createElement("td", null, "Monday"), 
-              React.createElement("td", null, "Tuesday"), 
-              React.createElement("td", null, "Wednesday"), 
-              React.createElement("td", null, "Thursday"), 
-              React.createElement("td", null, "Friday"), 
-              React.createElement("td", null, "Saturday")
+              React.createElement("th", {className: "col s1 center"}, "Sunday"), 
+              React.createElement("th", {className: "col s1 center"}, "Monday"), 
+              React.createElement("th", {className: "col s1 center"}, "Tuesday"), 
+              React.createElement("th", {className: "col s1 center"}, "Wednesday"), 
+              React.createElement("th", {className: "col s1 center"}, "Thursday"), 
+              React.createElement("th", {className: "col s1 center"}, "Friday"), 
+              React.createElement("th", {className: "col s1 center"}, "Saturday")
             ), 
             this.state.printedMonth, 
             React.createElement(ShowMemo, {year: this.state.selectedYear, 
@@ -159,7 +191,10 @@ module.exports = class Calendar extends React.Component{
                       date: this.state.selectedDate, 
                       refreshData: this.componentDidMount, 
                       memoList: this.state.memoList, 
-                      printMemos: this.printMemos})
+                      printMemos: this.printMemos, 
+                      memoFormStatus: this.state.memoFormStatus, 
+                      selectedMemoId: this.state.selectedMemoId, 
+                      toggleMemoForm: this.toggleMemoForm})
           )
         )
       )
@@ -180,28 +215,57 @@ var React = require('react');
 module.exports = class CreateMemos extends React.Component{
   constructor(props){
     super(props)
-    this.submitForm = this.submitForm.bind(this)
+    this.state          = {buttonClass: "btn disabled"}
+    this.submitForm     = this.submitForm.bind(this)
+    this.disableButton  = this.disableButton.bind(this)
   }
   submitForm(event){
     event.preventDefault();
-    var content = this.refs.memoContent.value.trim(),
-    refreshData = this.props.refreshData;
-    
-    $.ajax({url:  "/api/memos",
-            method: "POST",
-            data: { year: this.props.year,
-                    month: this.props.monthIndex+1,
-                    date: this.props.date,
-                    content: content}
+    var content     = this.refs.memoContent.value.trim(),
+        refreshData = this.props.refreshData;
+    $.ajax({url   : "/api/memos/"+this.props.selectedMemoId,
+            method: this.props.memoFormStatus,
+            data  : { year    : this.props.year,
+                      month   : this.props.monthIndex+1,
+                      date    : this.props.date,
+                      content : content}
     }).done(()=>{
-      console.log("refreshed");
       refreshData();
+      this.props.toggleMemoForm();
+      this.setState({buttonClass: "btn disabled"});
     })
   }
+  disableButton(){
+    return this.refs.memoContent.value ?
+      this.setState({buttonClass: "btn"})
+      :
+      this.setState({buttonClass: "btn disabled"})
+  }
+  memoForm(){
+    if(this.props.memoFormStatus){
+      return(
+        React.createElement("div", null, 
+          this.props.memoFormStatus == "POST" ?
+            React.createElement("h4", null, "Create Memo") : React.createElement("h4", null, "Edit Memo"), 
+          React.createElement("form", {onSubmit: this.submitForm}, 
+            React.createElement("textarea", {id: "memoContent", 
+                      ref: "memoContent", 
+                      className: "materialize-textarea", 
+                      onKeyUp: this.disableButton}
+            ), 
+            React.createElement("button", {type: "submit", 
+                    className: this.state.buttonClass}, 
+                      "Create Memo", 
+                      React.createElement("i", {className: "small material-icons right"}, "send")
+            )
+          )
+        )
+      )
+    }
+  }
   render(){
-    return( React.createElement("form", null, 
-                React.createElement("textarea", {id: "memoContent", ref: "memoContent", className: "materialize-textarea"}), 
-                React.createElement("div", {type: "submit", className: "btn", onClick: this.submitForm}, "Create Memo")
+    return( React.createElement("div", null, 
+              this.memoForm()
             )
     )
   }
@@ -217,13 +281,22 @@ module.exports = class ShowMemo extends React.Component{
     var year        = this.props.year,
         month       = this.props.month,
         monthIndex  = this.props.monthIndex,
-        day        = this.props.date
+        day         = this.props.date
     return(
-        React.createElement("div", {id: "memoModal", className: "modal"}, 
+        React.createElement("div", {id: "memoModal", 
+              className: "modal"}, 
           React.createElement("div", {className: "modal-content"}, 
-            React.createElement("h1", null, day, " ", month, " ", year), 
-            React.createElement("ul", null, this.props.printMemos(day,monthIndex+1,year)), 
-            React.createElement(CreateMemos, {year: year, monthIndex: monthIndex, date: day, refreshData: this.props.refreshData})
+            React.createElement("h2", null, day, " ", month, " ", year), 
+            React.createElement("div", {className: "btn", 
+                  onClick: ()=>{this.props.toggleMemoForm("POST")}}, 
+                    "Create Memos", 
+                    React.createElement("i", {className: "material-icons right"}, "add")
+            ), 
+            React.createElement("ul", null, this.props.printMemos(day,monthIndex+1,year,true)), 
+            React.createElement(CreateMemos, {year: year, 
+                          monthIndex: monthIndex, 
+                          date: day, 
+                          refreshData: this.props.refreshData, memoFormStatus: this.props.memoFormStatus, selectedMemoId: this.props.selectedMemoId, toggleMemoForm: this.props.toggleMemoForm})
           )
         )
     )
@@ -238,22 +311,27 @@ module.exports = class ShowCurrentMonth extends React.Component{
     $('.modal-trigger').leanModal();
   }
   showWeek(){
-    var curWeek = this.props.curWeek+1,
-        week    = this.props.curMonth.slice(((7*curWeek)-7-this.props.weekdayOfFirstDay),(7*curWeek-this.props.weekdayOfFirstDay)),
+    var curWeek    = this.props.curWeek+1,
+        week       = this.props.curMonth.slice(
+            ((7*curWeek)-7-this.props.weekdayOfFirstDay),
+            (7*curWeek-this.props.weekdayOfFirstDay)
+          ),
         monthIndex = this.props.monthIndex,
         year       = this.props.year
     return(week.map((day,i)=>{
-      return( React.createElement("td", {className: "current-month modal-trigger", 
+      return( React.createElement("td", {className: "current-month modal-trigger card", 
                   onClick: ()=>{this.props.toggleShowMemo(day)}, 
                   key: i+1, 
                   href: "#memoModal"}, 
-                React.createElement("span", {className: "date"}, day), 
+                React.createElement("div", {className: "date"}, day), 
                 React.createElement("ul", null, this.props.printMemos(day,monthIndex+1,year))
               ))
     }))
   }
   render(){
-    return(React.createElement("tr", {className: "weeks", key: this.props.curWeek}, this.showWeek()))}
+    return( React.createElement("tr", {className: "weeks", 
+                key: this.props.curWeek}, this.showWeek()
+            ))}
 }
 
 },{"react":441}],6:[function(require,module,exports){
@@ -264,26 +342,30 @@ module.exports = class ShowNextMonth extends React.Component{
     $('.modal-trigger').leanModal();
   }
   showNextWeek(){
-    var nextMonth = this.props.currentMonth.slice(this.props.currentMonth.length-(this.props.weekdayOflastDay+1),this.props.currentMonth.length),
+    var nextMonth = this.props.currentMonth.slice(
+      (this.props.currentMonth.length-(this.props.weekdayOflastDay+1)),
+      this.props.currentMonth.length),
     month         = this.props.monthIndex+1 > 11 ? 0 : this.props.monthIndex+1,
-    year          = this.props.monthIndex === 11 ? this.props.year+1 : this.props.year;
+    year          = this.props.monthIndex === 11 ?
+      this.props.year+1 : this.props.year;
 
-    nextMonth     = nextMonth.concat(this.props.nextMonth);
+    nextMonth = nextMonth.concat(this.props.nextMonth);
+
     return(nextMonth.map((day,i)=>{
       if(i < 7-this.props.nextMonth.length){
-        return( React.createElement("td", {className: "current-month modal-trigger", 
+        return( React.createElement("td", {className: "current-month modal-trigger card", 
                     onClick: ()=>{this.props.toggleShowMemo(day)}, 
                     key: i+1, 
                     href: "#memoModal"}, 
-                  React.createElement("span", {className: "date"}, day), 
+                  React.createElement("div", {className: "date"}, day), 
                   React.createElement("ul", null, this.props.printMemos(day,month+2,year))
                 ))
       } else{
-        return( React.createElement("td", {className: "next-month modal-trigger", 
+        return( React.createElement("td", {className: "next-month modal-trigger card", 
                     onClick: ()=>{this.props.toggleShowMemo(day,month,year)}, 
                     key: i+1, 
                     href: "#memoModal"}, 
-                  React.createElement("span", {className: "date"}, day), 
+                  React.createElement("div", {className: "date"}, day), 
                   React.createElement("ul", null, this.props.printMemos(day,month+1,year))
                 ))
       }
@@ -305,22 +387,25 @@ module.exports = class ShowPrevMonth extends React.Component{
         month     = this.props.monthIndex-1 < 0 ? 11 : this.props.monthIndex-1,
         year      = this.props.monthIndex === 0 ? this.props.year-1 : this.props.year;
 
-    prevMonth = prevMonth.concat(this.props.currentMonth.slice(0,7-prevMonth.length));
+    prevMonth = prevMonth.concat(
+      this.props.currentMonth.slice(0,7-prevMonth.length)
+    );
+
     return(prevMonth.map((day,i)=>{
       if(i < this.props.prevMonth.length){
-        return( React.createElement("td", {className: "prev-month modal-trigger", 
+        return( React.createElement("td", {className: "prev-month modal-trigger card", 
                     onClick: ()=>{this.props.toggleShowMemo(day,month,year)}, 
                     key: i+1, 
                     href: "#memoModal"}, 
-                  React.createElement("span", {className: "date"}, day), 
+                  React.createElement("div", {className: "date"}, day), 
                   React.createElement("ul", null, this.props.printMemos(day,month+1,year))
                 ))
       } else{
-        return( React.createElement("td", {className: "current-month modal-trigger", 
+        return( React.createElement("td", {className: "current-month modal-trigger card", 
                     onClick: ()=>{this.props.toggleShowMemo(day)}, 
                     key: i+1, 
                     href: "#memoModal"}, 
-                  React.createElement("span", {className: "date"}, day), 
+                  React.createElement("div", {className: "date"}, day), 
                   React.createElement("ul", null, this.props.printMemos(day,month+2,year))
                 ))
       }

@@ -7,23 +7,26 @@ var ShowMemo          = require('./memo_show.jsx');
 module.exports = class Calendar extends React.Component{
   constructor(props){
     super(props);
-    this.state = {today           : new Date(),
-                  calendar_month  : "",
-                  calendar_year   : new Date().getFullYear(),
-                  month           : new Date().getMonth(),
-                  printedMonth    : [],
-                  month_list      :  ["January","February","March","April","May","June","July","August","September","October","November","December"],
-                  showMemoModal   : false,
-                  memoList        : [],
-                  selectedDate    : "",
-                  selectedMonth   : "",
-                  selectedYear    : "",
-                  selectedMonthIndex: ""}
-    this.changeMonth    = this.changeMonth.bind(this)
-    this.showWeeks      = this.showWeeks.bind(this)
-    this.toggleShowMemo = this.toggleShowMemo.bind(this)
-    this.componentDidMount = this.componentDidMount.bind(this)
-    this.printMemos        = this.printMemos.bind(this)
+    this.state = {today             : new Date(),
+                  calendar_month    : "",
+                  calendar_year     : new Date().getFullYear(),
+                  month             : new Date().getMonth(),
+                  printedMonth      : [],
+                  month_list        :  ["January","February","March","April","May","June","July","August","September","October","November","December"],
+                  showMemoModal     : false,
+                  memoList          : [],
+                  selectedDate      : "",
+                  selectedMonth     : "",
+                  selectedYear      : "",
+                  selectedMonthIndex: "",
+                  memoFormStatus    : false,
+                  selectedMemoId    : ""}
+    this.changeMonth         = this.changeMonth.bind(this)
+    this.showWeeks           = this.showWeeks.bind(this)
+    this.toggleShowMemo      = this.toggleShowMemo.bind(this)
+    this.componentDidMount   = this.componentDidMount.bind(this)
+    this.printMemos          = this.printMemos.bind(this)
+    this.toggleMemoForm      = this.toggleMemoForm.bind(this)
   }
   componentDidMount(){
     this.setState({calendar_month: this.state.month_list[this.state.month]});
@@ -109,56 +112,88 @@ module.exports = class Calendar extends React.Component{
                     selectedDate      : date,
                     selectedMonth     : this.state.month_list[month],
                     selectedMonthIndex: month,
-                    selectedYear      : year})
+                    selectedYear      : year,
+                    memoFormStatus    : false})
   }
-  printMemos(day,month,year){
+  printMemos(day,month,year,modal = false){
     if(this.state.memoList){
       return this.state.memoList.map((memo,index)=>{
         if(memo.date === day && memo.month === month && memo.year === year){
-          return <li key={index}>{memo.content}</li>
+          return (
+            <li key={index}>
+              {memo.content}
+              {modal ?
+                <div>
+                  <span className="btn"
+                        onClick={()=>{this.deleteMemo(memo._id)}}>Delete</span>
+                  <span className="btn"
+                        onClick={()=>{this.editMemo(memo._id)}}>Edit</span>
+                </div>
+                :
+                ""}
+            </li>
+          )
         }
       })
     }
   }
+  deleteMemo(memoId){
+    var confirmMsg = confirm("Are you sure to delete this memo?");
+    if(confirmMsg){
+      $.ajax({url   : "/api/memos/"+memoId.toString(),
+              method: "DELETE"}).
+              done(()=>{this.setState({showMemoModal: false});
+                        this.componentDidMount();})
+    }
+  }
+  editMemo(memoId){
+    // this.setState({ memoFormStatus: "PUT",
+    //                 selectedMemoId: "/"+memoId})
+    this.toggleMemoForm("PATCH",memoId)
+  }
+  toggleMemoForm(status = false,memoId = ""){
+    this.setState({ memoFormStatus: status,
+                    selectedMemoId: memoId})
+  }
   render(){
     return(
       <div>
-      <h1>MemoUD</h1>
-        <table className="table borderless">
+        <h1>MemoUD</h1>
+        <div className="selected-calendar right">
+          <div  className="changeMonth"
+                onClick={()=>this.changeMonth(false,this.state.month)}>
+            <i className="material-icons">arrow_back</i>
+          </div>
+          <div className="selected-month center">
+            {this.state.calendar_month} {this.state.calendar_year}
+          </div>
+          <div  className="changeMonth"
+                onClick={()=>this.changeMonth(true,this.state.month)}>
+            <i className="material-icons">arrow_forward</i>
+          </div>
+        </div>
+        <table className="row">
           <tbody>
-            <tr>
-              <th className="col-sm-3" colSpan="3"></th>
-              <th className="col-sm-1">
-                <span className="changeMonth" onClick={()=>this.changeMonth(false,this.state.month)}>
-                  Prev
-                </span>
-              </th>
-              <th className="col-sm-2" colSpan="2">
-                {this.state.calendar_month} {this.state.calendar_year}
-              </th>
-              <th className="col-sm-1">
-                <span className="changeMonth"  onClick={()=>this.changeMonth(true,this.state.month)}>
-                  Next
-                </span>
-              </th>
-            </tr>
             <tr className="weekday">
-              <td>Sunday</td>
-              <td>Monday</td>
-              <td>Tuesday</td>
-              <td>Wednesday</td>
-              <td>Thursday</td>
-              <td>Friday</td>
-              <td>Saturday</td>
+              <th className="col s1 center">Sunday</th>
+              <th className="col s1 center">Monday</th>
+              <th className="col s1 center">Tuesday</th>
+              <th className="col s1 center">Wednesday</th>
+              <th className="col s1 center">Thursday</th>
+              <th className="col s1 center">Friday</th>
+              <th className="col s1 center">Saturday</th>
             </tr>
             {this.state.printedMonth}
-            <ShowMemo year       ={this.state.selectedYear}
-                      month      ={this.state.selectedMonth}
-                      monthIndex ={this.state.selectedMonthIndex}
-                      date       ={this.state.selectedDate}
-                      refreshData={this.componentDidMount}
-                      memoList   ={this.state.memoList}
-                      printMemos ={this.printMemos} />
+            <ShowMemo year           ={this.state.selectedYear}
+                      month          ={this.state.selectedMonth}
+                      monthIndex     ={this.state.selectedMonthIndex}
+                      date           ={this.state.selectedDate}
+                      refreshData    ={this.componentDidMount}
+                      memoList       ={this.state.memoList}
+                      printMemos     ={this.printMemos}
+                      memoFormStatus ={this.state.memoFormStatus}
+                      selectedMemoId ={this.state.selectedMemoId}
+                      toggleMemoForm ={this.toggleMemoForm}/>
           </tbody>
         </table>
       </div>
