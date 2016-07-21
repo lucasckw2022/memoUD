@@ -10,7 +10,7 @@ var cookieParser  = require('cookie-parser');
 var port          = process.env.PORT || 3000;
 // setup server
 var mongoose      = require('mongoose');
-var mongoUri      = process.env.MONGOLAB_URI || 'mongodb://localhost/memodbtest'
+var mongoUri      = 'mongodb://admin:y20229763@ds023435.mlab.com:23435/memoud'
 mongoose.connect(mongoUri);
 var router        = express.Router();
 var Memos         = require('./public/javascripts/models/memos');

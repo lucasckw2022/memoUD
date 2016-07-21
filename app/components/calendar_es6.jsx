@@ -54,7 +54,6 @@ module.exports = class Calendar extends React.Component{
       calendar_year   : currentCalendarYear,
       month           : newPrintedMonth},
       ()=>this.showWeeks())
-    $("h1").one('animationend', ()=>{$("h1").removeClass("rubberBand animated")})
   }
   showWeeks(){
     var newCurrentMonth   = [],

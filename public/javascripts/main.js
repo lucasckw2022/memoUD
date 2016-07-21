@@ -55,7 +55,6 @@ module.exports = class Calendar extends React.Component{
       calendar_year   : currentCalendarYear,
       month           : newPrintedMonth},
       ()=>this.showWeeks())
-    $("h1").one('animationend', ()=>{$("h1").removeClass("rubberBand animated")})
   }
   showWeeks(){
     var newCurrentMonth   = [],
@@ -286,7 +285,7 @@ module.exports = class ShowMemo extends React.Component{
         React.createElement("div", {id: "memoModal", 
               className: "modal"}, 
           React.createElement("div", {className: "modal-content"}, 
-            React.createElement("h2", null, day, " ", month, " ", year), 
+            React.createElement("h3", null, day, " ", month, " ", year), 
             React.createElement("div", {className: "btn", 
                   onClick: ()=>{this.props.toggleMemoForm("POST")}}, 
                     "Create Memos", 
