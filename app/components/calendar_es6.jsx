@@ -20,7 +20,7 @@ module.exports = class Calendar extends React.Component{
                   selectedYear      : "",
                   selectedMonthIndex: "",
                   memoFormStatus    : false,
-                  selectedMemoId    : ""}
+                  selectedMemo      : ""}
     this.changeMonth         = this.changeMonth.bind(this)
     this.showWeeks           = this.showWeeks.bind(this)
     this.toggleShowMemo      = this.toggleShowMemo.bind(this)
@@ -124,9 +124,13 @@ module.exports = class Calendar extends React.Component{
               {modal ?
                 <div>
                   <span className="btn"
-                        onClick={()=>{this.deleteMemo(memo._id)}}>Delete</span>
+                        onClick={()=>{this.deleteMemo(memo._id)}}>
+                        Remove
+                  </span>
                   <span className="btn"
-                        onClick={()=>{this.editMemo(memo._id)}}>Edit</span>
+                        onClick={()=>{this.editMemo(memo)}}>
+                        Modify
+                  </span>
                 </div>
                 :
                 ""}
@@ -145,14 +149,12 @@ module.exports = class Calendar extends React.Component{
                         this.componentDidMount();})
     }
   }
-  editMemo(memoId){
-    // this.setState({ memoFormStatus: "PUT",
-    //                 selectedMemoId: "/"+memoId})
-    this.toggleMemoForm("PATCH",memoId)
+  editMemo(memo){
+    this.toggleMemoForm("PATCH",memo)
   }
-  toggleMemoForm(status = false,memoId = ""){
+  toggleMemoForm(status = false,memo = ""){
     this.setState({ memoFormStatus: status,
-                    selectedMemoId: memoId})
+                    selectedMemo: memo})
   }
   render(){
     return(
@@ -191,7 +193,7 @@ module.exports = class Calendar extends React.Component{
                       memoList       ={this.state.memoList}
                       printMemos     ={this.printMemos}
                       memoFormStatus ={this.state.memoFormStatus}
-                      selectedMemoId ={this.state.selectedMemoId}
+                      selectedMemo   ={this.state.selectedMemo}
                       toggleMemoForm ={this.toggleMemoForm}/>
           </tbody>
         </table>

@@ -22,7 +22,8 @@ module.exports = class ShowMemo extends React.Component{
             <CreateMemos  year          ={year}
                           monthIndex    ={monthIndex}
                           date          ={day}
-                          refreshData   ={this.props.refreshData} memoFormStatus={this.props.memoFormStatus} selectedMemoId={this.props.selectedMemoId} toggleMemoForm={this.props.toggleMemoForm}/>
+                          refreshData   ={this.props.refreshData} memoFormStatus={this.props.memoFormStatus}
+                          selectedMemo  ={this.props.selectedMemo} toggleMemoForm={this.props.toggleMemoForm}/>
           </div>
         </div>
     )

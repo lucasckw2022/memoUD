@@ -3,15 +3,20 @@ var React = require('react');
 module.exports = class CreateMemos extends React.Component{
   constructor(props){
     super(props)
-    this.state          = {buttonClass: "btn disabled"}
+    this.state          = { buttonClass  : "btn disabled",
+                            textareaValue: ""}
     this.submitForm     = this.submitForm.bind(this)
     this.disableButton  = this.disableButton.bind(this)
+  }
+  componentWillReceiveProps(props){
+    this.setState({textareaValue: props.selectedMemo.content})
+    debugger
   }
   submitForm(event){
     event.preventDefault();
     var content     = this.refs.memoContent.value.trim(),
         refreshData = this.props.refreshData;
-    $.ajax({url   : "/api/memos/"+this.props.selectedMemoId,
+    $.ajax({url   : "/api/memos/"+this.props.selectedMemo._id,
             method: this.props.memoFormStatus,
             data  : { year    : this.props.year,
                       month   : this.props.monthIndex+1,
@@ -29,6 +34,10 @@ module.exports = class CreateMemos extends React.Component{
       :
       this.setState({buttonClass: "btn disabled"})
   }
+  changeTextareaValue(event){
+    this.setState({textareaValue: event.target.value});
+    debugger
+  }
   memoForm(){
     if(this.props.memoFormStatus){
       return(
@@ -39,11 +48,12 @@ module.exports = class CreateMemos extends React.Component{
             <textarea id        ="memoContent"
                       ref       ="memoContent"
                       className ="materialize-textarea"
-                      onKeyUp   ={this.disableButton}>
+                      onChange  ={(event)=>{this.disableButton();this.changeTextareaValue(event)}}
+                      value     ={this.state.textareaValue}>
             </textarea>
             <button type      ="submit"
                     className ={this.state.buttonClass}>
-                      Create Memo
+                      {this.props.memoFormStatus == "POST" ? "Create" : "Update"} Memo
                       <i className="small material-icons right">send</i>
             </button>
           </form>
