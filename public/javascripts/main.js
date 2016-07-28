@@ -223,13 +223,12 @@ module.exports = class CreateMemos extends React.Component{
   }
   componentWillReceiveProps(props){
     this.setState({textareaValue: props.selectedMemo.content})
-    debugger
   }
   submitForm(event){
     event.preventDefault();
     var content     = this.refs.memoContent.value.trim(),
         refreshData = this.props.refreshData;
-    $.ajax({url   : "/api/memos/"+this.props.selectedMemo._id,
+    $.ajax({url: "/api/memos/"+(this.props.selectedMemo ? this.props.selectedMemo._id : ""),
             method: this.props.memoFormStatus,
             data  : { year    : this.props.year,
                       month   : this.props.monthIndex+1,
@@ -242,14 +241,13 @@ module.exports = class CreateMemos extends React.Component{
     })
   }
   disableButton(){
-    return this.refs.memoContent.value ?
+    this.refs.memoContent.value ?
       this.setState({buttonClass: "btn"})
       :
       this.setState({buttonClass: "btn disabled"})
   }
   changeTextareaValue(event){
     this.setState({textareaValue: event.target.value});
-    debugger
   }
   memoForm(){
     if(this.props.memoFormStatus){
