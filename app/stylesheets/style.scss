@@ -1,5 +1,7 @@
+$break-point: 992px;
+
 html {
-  background: url(https://rborg42.files.wordpress.com/2012/12/forest1.png) no-repeat;
+  background: url(https://rborg42.files.wordpress.com/2012/12/forest1.png) no-repeat fixed;
   background-size: cover;
 
   body {
@@ -7,24 +9,33 @@ html {
     font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
     color: #1f220d;
 
-    h1 {
-      display: inline-block;
-    }
+    header {
+      display: flex;
+      justify-content: space-between;
+      @media screen and (max-width: $break-point){
+        flex-direction: column;
+        align-items: center;
+      }
 
-    .selected-calendar {
-      margin: 3em 0 0 0;
-    }
+      h1 {
+        display: inline-block;
+      }
 
-    .changeMonth {
-      display: inline-block;
-      cursor: pointer;
-    }
+      .selected-calendar {
+        margin: 3em 0 0 0;
+      }
 
-    .selected-month {
-      display: inline-block;
-      font-size: 30px;
-      margin: 15px;
-      width: 250px;
+      .changeMonth {
+        display: inline-block;
+        cursor: pointer;
+      }
+
+      .selected-month {
+        display: inline-block;
+        font-size: 30px;
+        margin: 15px;
+        width: 250px;
+      }
     }
 
     table.row {
@@ -38,6 +49,10 @@ html {
 
       .weekday {
         text-align: center;
+        @media screen and (max-width: $break-point){
+          display: none;
+        }
+
         th {
           padding: 0 0 10px 0;
         }
@@ -45,6 +60,12 @@ html {
 
       tr.weeks {
         height: 90px;
+
+        .modal-trigger {
+          @media screen and (max-width: $break-point){
+            display: flex;
+          }
+        }
 
         td.prev-month {
           background-color: #D3D3D3;

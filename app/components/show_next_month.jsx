@@ -8,9 +8,8 @@ module.exports = class ShowNextMonth extends React.Component{
     var nextMonth = this.props.currentMonth.slice(
       (this.props.currentMonth.length-(this.props.weekdayOflastDay+1)),
       this.props.currentMonth.length),
-    month         = this.props.monthIndex+1 > 11 ? 0 : this.props.monthIndex+1,
-    year          = this.props.monthIndex === 11 ?
-      this.props.year+1 : this.props.year;
+        month     = this.props.monthIndex+1 > 11 ? 12 : this.props.monthIndex+1,
+        year      = this.props.year;
 
     nextMonth = nextMonth.concat(this.props.nextMonth);
 
@@ -21,7 +20,7 @@ module.exports = class ShowNextMonth extends React.Component{
                     key      ={i+1}
                     href     ="#memoModal">
                   <div className="date">{day}</div>
-                  <ul>{this.props.printMemos(day,month+2,year)}</ul>
+                  <ul>{this.props.printMemos(day,month,year)}</ul>
                 </td>)
       } else{
         return( <td className="next-month modal-trigger card"

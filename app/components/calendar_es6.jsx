@@ -159,20 +159,22 @@ module.exports = class Calendar extends React.Component{
   render(){
     return(
       <div>
-        <h1>MemoUD</h1>
-        <div className="selected-calendar right">
-          <div  className="changeMonth"
-                onClick={()=>this.changeMonth(false,this.state.month)}>
-            <i className="material-icons">arrow_back</i>
+        <header>
+          <h1>MemoUD</h1>
+          <div className="selected-calendar right">
+            <div  className="changeMonth"
+                  onClick={()=>this.changeMonth(false,this.state.month)}>
+              <i className="material-icons">arrow_back</i>
+            </div>
+            <div className="selected-month center">
+              {this.state.calendar_month} {this.state.calendar_year}
+            </div>
+            <div  className="changeMonth"
+                  onClick={()=>this.changeMonth(true,this.state.month)}>
+              <i className="material-icons">arrow_forward</i>
+            </div>
           </div>
-          <div className="selected-month center">
-            {this.state.calendar_month} {this.state.calendar_year}
-          </div>
-          <div  className="changeMonth"
-                onClick={()=>this.changeMonth(true,this.state.month)}>
-            <i className="material-icons">arrow_forward</i>
-          </div>
-        </div>
+        </header>
         <table className="row">
           <tbody>
             <tr className="weekday">
