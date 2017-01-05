@@ -1,32 +1,45 @@
 html {
-  background: url(https://rborg42.files.wordpress.com/2012/12/forest1.png) no-repeat;
+  background: url(https://rborg42.files.wordpress.com/2012/12/forest1.png) no-repeat fixed;
   background-size: cover; }
   html body {
     padding: 0 50px;
     font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
     color: #1f220d; }
-    html body h1 {
-      display: inline-block; }
-    html body .selected-calendar {
-      margin: 3em 0 0 0; }
-    html body .changeMonth {
-      display: inline-block;
-      cursor: pointer; }
-    html body .selected-month {
-      display: inline-block;
-      font-size: 30px;
-      margin: 15px;
-      width: 250px; }
+    html body header {
+      display: flex;
+      justify-content: space-between; }
+      @media screen and (max-width: 992px) {
+        html body header {
+          flex-direction: column;
+          align-items: center; } }
+      html body header h1 {
+        display: inline-block; }
+      html body header .selected-calendar {
+        margin: 3em 0 0 0; }
+      html body header .changeMonth {
+        display: inline-block;
+        cursor: pointer; }
+      html body header .selected-month {
+        display: inline-block;
+        font-size: 30px;
+        margin: 15px;
+        width: 250px; }
     html body table.row th.col {
       float: none; }
     html body table.row .changeMonth {
       cursor: pointer; }
     html body table.row .weekday {
       text-align: center; }
+      @media screen and (max-width: 992px) {
+        html body table.row .weekday {
+          display: none; } }
       html body table.row .weekday th {
         padding: 0 0 10px 0; }
     html body table.row tr.weeks {
       height: 90px; }
+      @media screen and (max-width: 992px) {
+        html body table.row tr.weeks .modal-trigger {
+          display: flex; } }
       html body table.row tr.weeks td.prev-month {
         background-color: #D3D3D3; }
         html body table.row tr.weeks td.prev-month .date {
