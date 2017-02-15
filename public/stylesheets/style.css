@@ -4,7 +4,8 @@ html {
   html body {
     padding: 0 50px;
     font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
-    color: #1f220d; }
+    color: #1f220d;
+    width: 100% !important; }
     html body header {
       display: flex;
       justify-content: space-between; }
@@ -15,7 +16,9 @@ html {
       html body header h1 {
         display: inline-block; }
       html body header .selected-calendar {
-        margin: 3em 0 0 0; }
+        margin: 3em 0 0 0;
+        display: flex;
+        align-items: center; }
       html body header .changeMonth {
         display: inline-block;
         cursor: pointer; }
