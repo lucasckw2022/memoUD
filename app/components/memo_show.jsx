@@ -9,9 +9,9 @@ module.exports = class ShowMemo extends React.Component{
         monthIndex  = this.props.monthIndex,
         day         = this.props.date
     return(
-        <div  id        ="memoModal"
+        <tr  id        ="memoModal"
               className ="modal">
-          <div className="modal-content">
+          <td className="modal-content">
             <h3>{day} {month} {year}</h3>
             <div  className="btn"
                   onClick={()=>{this.props.toggleMemoForm("POST")}}>
@@ -24,8 +24,8 @@ module.exports = class ShowMemo extends React.Component{
                           date          ={day}
                           refreshData   ={this.props.refreshData} memoFormStatus={this.props.memoFormStatus}
                           selectedMemo  ={this.props.selectedMemo} toggleMemoForm={this.props.toggleMemoForm}/>
-          </div>
-        </div>
+          </td>
+        </tr>
     )
   }
 }

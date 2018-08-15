@@ -83,7 +83,8 @@ module.exports = class Calendar extends React.Component{
                               monthIndex      ={this.state.month}
                               year            ={this.state.calendar_year}
                               memoList        ={this.state.memoList}
-                              printMemos      ={this.printMemos} />)
+                              printMemos      ={this.printMemos} 
+                              key             ={`prev`}/>)
     for(var i = 1; i <= weeksInMonth-2; i++){
       show.push(<ShowCurrentMonth   toggleShowMemo    ={this.toggleShowMemo}
                                     curWeek           ={i}
@@ -103,7 +104,8 @@ module.exports = class Calendar extends React.Component{
                               monthIndex        ={this.state.month}
                               year              ={this.state.calendar_year}
                               memoList          ={this.state.memoList}
-                              printMemos        ={this.printMemos} />)
+                              printMemos        ={this.printMemos} 
+                              key               ={`next`}/>)
     this.setState({printedMonth: show});
   }
   toggleShowMemo(date,month = this.state.month,year = this.state.calendar_year){

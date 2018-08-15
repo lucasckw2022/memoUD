@@ -1,7 +1,8 @@
-var mongoose = require('mongoose');
-var Schema = mongoose.Schema;
+const mongoose = require('mongoose');
+mongoose.Promise = global.Promise;
+const Schema = mongoose.Schema;
 
-var MemoSchema = new Schema({
+const MemoSchema = new Schema({
   year: Number,
   month: Number,
   date: Number,

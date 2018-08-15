@@ -7,17 +7,28 @@ app.use(bodyParser.json());
 var cookieParser  = require('cookie-parser');
 // set the port of our application
 // process.env.PORT lets the port be set by Heroku
-var port          = process.env.PORT || 3000;
+var port          = process.env.PORT || 8080;
 // setup server
 var mongoose      = require('mongoose');
 var mongoUri      = 'mongodb://admin:y20229763@ds023435.mlab.com:23435/memoud'
-mongoose.connect(mongoUri);
 var router        = express.Router();
 var Memos         = require('./public/javascripts/models/memos');
 // Memos.aggregate([{$project: {year: "$year"}}]);
 // this is middleware everytime access to the database
+
+mongoose.connect(mongoUri,
+  { useNewUrlParser: true }
+)
+.then(() => {
+  console.log("Connected to Database");
+})
+.catch((err)=>{
+  console.log('cannot connect to mongoDB', err)
+}
+);
+
 router.use('/', function (req,res,next) {
-  console.log("accessed to DB");
+  console.log("accessed to landing page");
   next();
 });
 router.route('/memos')
