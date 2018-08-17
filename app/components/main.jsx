@@ -1,5 +1,5 @@
-var React     = require('react');
-var ReactDOM  = require('react-dom');
-var Calendar  = require('./calendar_es6.jsx');
+import React     from 'react';
+import ReactDOM  from 'react-dom';
+import Calendar  from './calendar_es6';
 
 ReactDOM.render(<Calendar />, document.getElementById('main'));
