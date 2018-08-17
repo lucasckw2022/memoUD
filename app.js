@@ -1,31 +1,28 @@
-var express       = require('express');
-var path          = require('path');
-var app           = express();
-var bodyParser    = require('body-parser');
+const express       = require('express');
+const path          = require('path');
+const app           = express();
+const bodyParser    = require('body-parser');
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-var cookieParser  = require('cookie-parser');
+const cookieParser  = require('cookie-parser');
 // set the port of our application
 // process.env.PORT lets the port be set by Heroku
-var port          = process.env.PORT || 8080;
+const port          = process.env.PORT || 8080;
 // setup server
-var mongoose      = require('mongoose');
-var mongoUri      = 'mongodb://admin:y20229763@ds023435.mlab.com:23435/memoud'
-var router        = express.Router();
-var Memos         = require('./public/javascripts/models/memos');
-// Memos.aggregate([{$project: {year: "$year"}}]);
+const mongoose      = require('mongoose');
+const MongoClient   = require('mongodb').MongoClient;
+//config for switching real and test mongoDB
+const mongoUri      = process.env.PORT ? 'mongodb://admin:y20229763@ds023435.mlab.com:23435/memoud' : 'mongodb://localhost:27017/memoud'
+const router        = express.Router();
+const Memos         = require('./public/javascripts/models/memos');
 // this is middleware everytime access to the database
-
-mongoose.connect(mongoUri,
-  { useNewUrlParser: true }
-)
+mongoose.connect(mongoUri, { useNewUrlParser: true })
 .then(() => {
   console.log("Connected to Database");
 })
 .catch((err)=>{
   console.log('cannot connect to mongoDB', err)
-}
-);
+});
 
 router.use('/', function (req,res,next) {
   console.log("accessed to landing page");
@@ -41,7 +38,7 @@ router.route('/memos')
       memo.save((err,memos)=>{
         if(err){
           res.send(err);}
-          res.json(201,memos)
+          res.status(200).json(memos)
       })
     })
     .get((req,res)=>{
@@ -50,7 +47,7 @@ router.route('/memos')
       ],(err, memos)=>{
         if(err){
           res.send(err);}
-        res.json(memos);
+          res.status(200).json(memos);
       })
     })
 
@@ -96,6 +93,8 @@ app.get('/', function (req, res) {
   res.sendFile(path.join(__dirname+'/public/index.html'));
 });
 
-app.listen(port);
+app.listen(port, ()=>{
+  console.log('connected to port ' + port);
+});
 
 module.exports = app;
