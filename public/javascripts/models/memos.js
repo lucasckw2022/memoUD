@@ -3,9 +3,10 @@ mongoose.Promise = global.Promise;
 const Schema = mongoose.Schema;
 
 const MemoSchema = new Schema({
-  year: Number,
-  month: Number,
-  date: Number,
+  // year: Number,
+  // month: Number,
+  // date: Number,
+  date: Date,
   content: String
 });
 
